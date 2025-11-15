@@ -46,6 +46,7 @@ export type Database = {
           joined_at: string
           name: string
           session_id: string
+          winner_type: string | null
         }
         Insert: {
           device_id: string
@@ -54,6 +55,7 @@ export type Database = {
           joined_at?: string
           name: string
           session_id: string
+          winner_type?: string | null
         }
         Update: {
           device_id?: string
@@ -62,6 +64,7 @@ export type Database = {
           joined_at?: string
           name?: string
           session_id?: string
+          winner_type?: string | null
         }
         Relationships: [
           {
