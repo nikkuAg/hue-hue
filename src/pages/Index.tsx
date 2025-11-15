@@ -57,14 +57,29 @@ const Index = () => {
     }
   }, []);
 
-  // Watch for session status changes
+  // Watch for session status changes and fetch winner_type
   useEffect(() => {
     if (!session) return;
 
     if (session.status === "playing" && gameState === "waiting") {
-      setGameState("playing");
+      // Fetch winner status before showing scratch card
+      if (currentPlayerId) {
+        supabase
+          .from("players")
+          .select("winner_type")
+          .eq("id", currentPlayerId)
+          .single()
+          .then(({ data }) => {
+            if (data) {
+              setWinnerType(data.winner_type || "none");
+            }
+            setGameState("playing");
+          });
+      } else {
+        setGameState("playing");
+      }
     }
-  }, [session, gameState]);
+  }, [session, gameState, currentPlayerId]);
 
   const handleHostSession = (newSessionId: string, newHostCode: string) => {
     setSessionId(newSessionId);
@@ -192,6 +207,40 @@ const Index = () => {
     }
   };
 
+  const playSound = (isWinner: boolean) => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    if (isWinner) {
+      // Winner sound: ascending happy tones
+      const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      let time = audioContext.currentTime;
+      
+      frequencies.forEach((freq, index) => {
+        oscillator.frequency.setValueAtTime(freq, time);
+        gainNode.gain.setValueAtTime(0.3, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+        time += 0.15;
+      });
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.7);
+    } else {
+      // Loser sound: gentle descending tone
+      oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
+      oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5); // A3
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    }
+  };
+
   const handleScratchComplete = () => {
     setTimeout(async () => {
       if (currentPlayerId) {
@@ -205,6 +254,10 @@ const Index = () => {
         const won = data?.is_winner || false;
         setIsWinner(won);
         setWinnerType(data?.winner_type || "none");
+        
+        // Play sound effect
+        playSound(won);
+        
         setGameState("result");
 
         if (won) {
@@ -442,10 +495,10 @@ const Index = () => {
                         <div className="text-5xl md:text-7xl animate-float">💝</div>
                         <div className="space-y-2">
                           <h3 className="text-xl md:text-2xl font-semibold text-foreground">
-                            Thank You!
+                            Thank You for Playing!
                           </h3>
                           <p className="text-sm md:text-base text-muted-foreground">
-                            Better luck next time!
+                            We appreciate your participation
                           </p>
                         </div>
                       </div>
