@@ -29,35 +29,75 @@ export const ScratchCard = ({
     canvas.height = rect.height * 2;
     ctx.scale(2, 2);
 
-    // Create gradient scratch surface
-    const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-    gradient.addColorStop(0, "hsl(43, 74%, 49%)");
-    gradient.addColorStop(0.5, "hsl(340, 55%, 82%)");
-    gradient.addColorStop(1, "hsl(43, 74%, 49%)");
+    // Create radial gradient for metallic effect
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const radius = Math.max(rect.width, rect.height) / 2;
+    
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    gradient.addColorStop(0, "hsl(45, 80%, 65%)");
+    gradient.addColorStop(0.3, "hsl(43, 74%, 49%)");
+    gradient.addColorStop(0.5, "hsl(340, 65%, 75%)");
+    gradient.addColorStop(0.7, "hsl(43, 74%, 49%)");
+    gradient.addColorStop(1, "hsl(40, 70%, 45%)");
     
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, rect.width, rect.height);
 
-    // Add texture
-    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-    for (let i = 0; i < 100; i++) {
-      ctx.fillRect(
-        Math.random() * rect.width,
-        Math.random() * rect.height,
-        2,
-        2
-      );
+    // Add shimmer effect
+    const shimmer = ctx.createLinearGradient(0, 0, rect.width, 0);
+    shimmer.addColorStop(0, "rgba(255, 255, 255, 0)");
+    shimmer.addColorStop(0.4, "rgba(255, 255, 255, 0)");
+    shimmer.addColorStop(0.5, "rgba(255, 255, 255, 0.3)");
+    shimmer.addColorStop(0.6, "rgba(255, 255, 255, 0)");
+    shimmer.addColorStop(1, "rgba(255, 255, 255, 0)");
+    
+    ctx.fillStyle = shimmer;
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    // Add sparkle texture
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    for (let i = 0; i < 150; i++) {
+      const x = Math.random() * rect.width;
+      const y = Math.random() * rect.height;
+      const size = Math.random() * 3;
+      
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, 2 * Math.PI);
+      ctx.fill();
     }
 
-    // Add text
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.font = "bold 24px serif";
+    // Add decorative border
+    ctx.strokeStyle = "rgba(255, 215, 0, 0.6)";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(2, 2, rect.width - 4, rect.height - 4);
+
+    // Add inner border
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(8, 8, rect.width - 16, rect.height - 16);
+
+    // Add text with shadow
+    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    
+    ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+    ctx.font = "bold 28px serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Scratch Here!", rect.width / 2, rect.height / 2 - 20);
+    ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, rect.height / 2 - 25);
     
-    ctx.font = "16px sans-serif";
-    ctx.fillText("👆", rect.width / 2, rect.height / 2 + 20);
+    ctx.font = "18px sans-serif";
+    ctx.fillText("Reveal Your Fortune", rect.width / 2, rect.height / 2 + 15);
+    
+    ctx.font = "32px sans-serif";
+    ctx.fillText("👆", rect.width / 2, rect.height / 2 + 50);
+    
+    // Reset shadow
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
   }, []);
 
   const scratch = (x: number, y: number) => {
