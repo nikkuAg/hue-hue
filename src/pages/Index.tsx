@@ -316,11 +316,15 @@ const Index = () => {
         {/* Setup State */}
         {gameState === "setup" && (
           <div className="space-y-4 animate-fade-in">
-            <HostSetup onSessionCreated={handleHostSession} />
-            
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">or</p>
-            </div>
+            {!sessionCode && (
+              <>
+                <HostSetup onSessionCreated={handleHostSession} />
+                
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">or</p>
+                </div>
+              </>
+            )}
 
             <Card className="p-6 md:p-8 shadow-elegant border-gold/20">
               <div className="space-y-6">
