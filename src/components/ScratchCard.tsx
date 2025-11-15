@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import anniversaryPattern from "@/assets/anniversary-pattern.png";
 
 interface ScratchCardProps {
   content: React.ReactNode;
   onComplete?: () => void;
   scratchPercentage?: number;
+  showPattern?: boolean; // To show anniversary pattern instead of metallic coating
 }
 
 export const ScratchCard = ({ 
   content, 
   onComplete, 
-  scratchPercentage = 60 
+  scratchPercentage = 60,
+  showPattern = true 
 }: ScratchCardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScratching, setIsScratching] = useState(false);
@@ -30,76 +33,69 @@ export const ScratchCard = ({
     canvas.height = rect.height * 2;
     ctx.scale(2, 2);
 
-    // Create radial gradient for metallic effect
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const radius = Math.max(rect.width, rect.height) / 2;
-    
-    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-    gradient.addColorStop(0, "hsl(45, 80%, 65%)");
-    gradient.addColorStop(0.3, "hsl(43, 74%, 49%)");
-    gradient.addColorStop(0.5, "hsl(340, 65%, 75%)");
-    gradient.addColorStop(0.7, "hsl(43, 74%, 49%)");
-    gradient.addColorStop(1, "hsl(40, 70%, 45%)");
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, rect.width, rect.height);
+    if (showPattern) {
+      // Load and draw the anniversary pattern
+      const img = new Image();
+      img.src = anniversaryPattern;
+      img.onload = () => {
+        // Create a silver background first
+        const silverGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+        silverGradient.addColorStop(0, "hsl(0, 0%, 85%)");
+        silverGradient.addColorStop(0.5, "hsl(0, 0%, 95%)");
+        silverGradient.addColorStop(1, "hsl(0, 0%, 85%)");
+        
+        ctx.fillStyle = silverGradient;
+        ctx.fillRect(0, 0, rect.width, rect.height);
 
-    // Add shimmer effect
-    const shimmer = ctx.createLinearGradient(0, 0, rect.width, 0);
-    shimmer.addColorStop(0, "rgba(255, 255, 255, 0)");
-    shimmer.addColorStop(0.4, "rgba(255, 255, 255, 0)");
-    shimmer.addColorStop(0.5, "rgba(255, 255, 255, 0.3)");
-    shimmer.addColorStop(0.6, "rgba(255, 255, 255, 0)");
-    shimmer.addColorStop(1, "rgba(255, 255, 255, 0)");
-    
-    ctx.fillStyle = shimmer;
-    ctx.fillRect(0, 0, rect.width, rect.height);
+        // Draw the pattern tiled across the card
+        const patternSize = Math.min(rect.width, rect.height) * 0.8;
+        const x = (rect.width - patternSize) / 2;
+        const y = (rect.height - patternSize) / 2;
+        
+        ctx.globalAlpha = 0.6;
+        ctx.drawImage(img, x, y, patternSize, patternSize);
+        ctx.globalAlpha = 1;
 
-    // Add sparkle texture
-    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-    for (let i = 0; i < 150; i++) {
-      const x = Math.random() * rect.width;
-      const y = Math.random() * rect.height;
-      const size = Math.random() * 3;
+        // Add decorative border
+        ctx.strokeStyle = "hsl(43, 74%, 58%)"; // Gold
+        ctx.lineWidth = 3;
+        ctx.strokeRect(4, 4, rect.width - 8, rect.height - 8);
+
+        // Add text
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        
+        ctx.fillStyle = "hsl(280, 40%, 35%)"; // Deep maroon
+        ctx.font = "bold 24px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, 20);
+        
+        ctx.font = "16px sans-serif";
+        ctx.fillText("Reveal Your Prize", rect.width / 2, rect.height - 40);
+        
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+      };
+    } else {
+      // Original metallic gradient coating
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const radius = Math.max(rect.width, rect.height) / 2;
       
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, 2 * Math.PI);
-      ctx.fill();
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+      gradient.addColorStop(0, "hsl(45, 80%, 65%)");
+      gradient.addColorStop(0.3, "hsl(43, 74%, 49%)");
+      gradient.addColorStop(0.5, "hsl(340, 65%, 75%)");
+      gradient.addColorStop(0.7, "hsl(43, 74%, 49%)");
+      gradient.addColorStop(1, "hsl(40, 70%, 45%)");
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, rect.width, rect.height);
     }
-
-    // Add decorative border
-    ctx.strokeStyle = "rgba(255, 215, 0, 0.6)";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(2, 2, rect.width - 4, rect.height - 4);
-
-    // Add inner border
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(8, 8, rect.width - 16, rect.height - 16);
-
-    // Add text with shadow
-    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    
-    ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-    ctx.font = "bold 28px serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, rect.height / 2 - 25);
-    
-    ctx.font = "18px sans-serif";
-    ctx.fillText("Reveal Your Fortune", rect.width / 2, rect.height / 2 + 15);
-    
-    ctx.font = "32px sans-serif";
-    ctx.fillText("👆", rect.width / 2, rect.height / 2 + 50);
-    
-    // Reset shadow
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-  }, []);
+  }, [showPattern]);
 
   const scratch = (x: number, y: number) => {
     const canvas = canvasRef.current;
