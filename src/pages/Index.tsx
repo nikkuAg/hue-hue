@@ -5,17 +5,22 @@ import { Card } from "@/components/ui/card";
 import { ScratchCard } from "@/components/ScratchCard";
 import { Confetti } from "@/components/Confetti";
 import { HostSetup } from "@/components/HostSetup";
+import { ParentsImageUpload } from "@/components/ParentsImageUpload";
 import { useGameSession } from "@/hooks/useGameSession";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Sparkles, Users, Crown, Gift } from "lucide-react";
+import { Sparkles, Users, Crown, Gift, Upload } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import anniversaryPattern from "@/assets/anniversary-pattern.png";
 
 type GameState = "setup" | "join" | "waiting" | "playing" | "result";
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>("setup");
   const [playerName, setPlayerName] = useState("");
-  const [sessionCode, setSessionCode] = useState("");
+  const [sessionCodeInput, setSessionCodeInput] = useState(""); // For manual code entry
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSessionCode = urlParams.get("code") || ""; // Code from shared link
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
   const [isWinner, setIsWinner] = useState(false);
@@ -27,12 +32,9 @@ const Index = () => {
   const { session, players, loading } = useGameSession(sessionId);
 
   useEffect(() => {
-    // Check URL for session code
-    const urlParams = new URLSearchParams(window.location.search);
-    const codeFromUrl = urlParams.get("code");
-    
-    if (codeFromUrl) {
-      setSessionCode(codeFromUrl.toUpperCase());
+    // Populate sessionCodeInput from URL if available
+    if (urlSessionCode) {
+      setSessionCodeInput(urlSessionCode.toUpperCase());
     }
 
     // Check if user is returning host
@@ -94,7 +96,10 @@ const Index = () => {
       return;
     }
 
-    if (!sessionCode.trim()) {
+    // Use URL code if available, otherwise use manual input
+    const codeToUse = urlSessionCode || sessionCodeInput;
+    
+    if (!codeToUse.trim()) {
       toast.error("Please enter the game code");
       return;
     }
@@ -104,7 +109,7 @@ const Index = () => {
       const { data: sessionData, error: sessionError } = await supabase
         .from("game_sessions")
         .select("*")
-        .eq("host_code", sessionCode.toUpperCase())
+        .eq("host_code", codeToUse.toUpperCase())
         .single();
 
       if (sessionError || !sessionData) {
@@ -278,7 +283,7 @@ const Index = () => {
     localStorage.clear();
     setGameState("setup");
     setPlayerName("");
-    setSessionCode("");
+    setSessionCodeInput("");
     setSessionId(null);
     setCurrentPlayerId(null);
     setIsWinner(false);
@@ -316,9 +321,11 @@ const Index = () => {
         {/* Setup State */}
         {gameState === "setup" && (
           <div className="space-y-4 animate-fade-in">
-            {!sessionCode && (
+            {!urlSessionCode && (
               <>
                 <HostSetup onSessionCreated={handleHostSession} />
+                
+                <ParentsImageUpload />
                 
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">or</p>
@@ -346,14 +353,18 @@ const Index = () => {
                     onChange={(e) => setPlayerName(e.target.value)}
                     className="text-lg h-12 border-gold/30 focus:border-gold"
                   />
-                  <Input
-                    type="text"
-                    placeholder="Game Code (e.g., ABC123)"
-                    value={sessionCode}
-                    onChange={(e) => setSessionCode(e.target.value.toUpperCase())}
-                    className="text-lg h-12 border-gold/30 focus:border-gold text-center font-bold tracking-wider"
-                    maxLength={6}
-                  />
+                  
+                  {/* Only show game code input if NOT coming from a shared link */}
+                  {!urlSessionCode && (
+                    <Input
+                      type="text"
+                      placeholder="Game Code (e.g., ABC123)"
+                      value={sessionCodeInput}
+                      onChange={(e) => setSessionCodeInput(e.target.value.toUpperCase())}
+                      className="text-lg h-12 border-gold/30 focus:border-gold text-center font-bold tracking-wider"
+                      maxLength={6}
+                    />
+                  )}
                   <Button
                     onClick={handleJoinGame}
                     className="w-full h-12 text-lg bg-gradient-to-r from-gold to-accent hover:opacity-90 transition-opacity"
@@ -472,15 +483,37 @@ const Index = () => {
                   <div className="w-full h-full bg-gradient-to-br from-card via-champagne to-rose-gold/30 flex items-center justify-center p-8 border-4 border-gold/30 rounded-2xl">
                     {winnerType === "image" ? (
                       <div className="text-center space-y-4">
-                        <div className="text-6xl md:text-8xl animate-float">🎁</div>
-                        <div className="space-y-2">
-                          <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                            WINNER!
-                          </h3>
-                          <p className="text-lg md:text-xl text-foreground font-semibold">
-                            You've won a special gift!
-                          </p>
-                        </div>
+                        {localStorage.getItem("anniversary-parents-image") ? (
+                          <div className="space-y-4">
+                            <div className="w-full max-w-sm mx-auto rounded-lg overflow-hidden border-4 border-gold shadow-gold">
+                              <img
+                                src={localStorage.getItem("anniversary-parents-image")!}
+                                alt="Special Gift"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                                WINNER!
+                              </h3>
+                              <p className="text-lg md:text-xl text-foreground font-semibold">
+                                You've won a special gift!
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="text-6xl md:text-8xl animate-float">🎁</div>
+                            <div className="space-y-2">
+                              <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                                WINNER!
+                              </h3>
+                              <p className="text-lg md:text-xl text-foreground font-semibold">
+                                You've won a special gift!
+                              </p>
+                            </div>
+                          </>
+                        )}
                       </div>
                     ) : winnerType === "silver_jubilee" ? (
                       <div className="text-center space-y-4">
