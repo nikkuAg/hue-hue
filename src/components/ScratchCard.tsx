@@ -15,6 +15,7 @@ export const ScratchCard = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScratching, setIsScratching] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const lastPointRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -111,16 +112,28 @@ export const ScratchCard = ({
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
+    const currentX = (x - rect.left) * scaleX;
+    const currentY = (y - rect.top) * scaleY;
+
     ctx.globalCompositeOperation = "destination-out";
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.lineWidth = 60 * scaleX;
+
+    // Draw continuous line if we have a last point
+    if (lastPointRef.current && isScratching) {
+      ctx.beginPath();
+      ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y);
+      ctx.lineTo(currentX, currentY);
+      ctx.stroke();
+    }
+
+    // Draw circle at current position for smooth coverage
     ctx.beginPath();
-    ctx.arc(
-      (x - rect.left) * scaleX,
-      (y - rect.top) * scaleY,
-      30 * scaleX,
-      0,
-      2 * Math.PI
-    );
+    ctx.arc(currentX, currentY, 30 * scaleX, 0, 2 * Math.PI);
     ctx.fill();
+
+    lastPointRef.current = { x: currentX, y: currentY };
 
     checkCompletion();
   };
@@ -152,11 +165,14 @@ export const ScratchCard = ({
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
     setIsScratching(true);
+    lastPointRef.current = null;
     scratch(e.clientX, e.clientY);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
+    e.preventDefault();
     if (isScratching) {
       scratch(e.clientX, e.clientY);
     }
@@ -164,6 +180,7 @@ export const ScratchCard = ({
 
   const handlePointerUp = () => {
     setIsScratching(false);
+    lastPointRef.current = null;
   };
 
   return (
