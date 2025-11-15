@@ -6,6 +6,7 @@ export interface Player {
   name: string;
   device_id: string;
   is_winner: boolean;
+  winner_type: string;
   joined_at: string;
 }
 
