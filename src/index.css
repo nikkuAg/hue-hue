@@ -8,46 +8,61 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 28 40% 97%;
-    --foreground: 30 15% 15%;
+    /* Indian Silver Jubilee Theme - Light colors with silver, gold accents */
+    --background: 0 0% 98%;
+    --foreground: 240 10% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 30 15% 15%;
+    --card-foreground: 240 10% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 30 15% 15%;
+    --popover-foreground: 240 10% 15%;
 
-    --primary: 43 74% 49%;
-    --primary-foreground: 30 15% 15%;
+    /* Silver as primary - metallic silver tone */
+    --primary: 0 0% 75%;
+    --primary-foreground: 240 10% 15%;
 
-    --secondary: 340 55% 82%;
-    --secondary-foreground: 30 15% 15%;
+    /* Royal purple/maroon for secondary - traditional Indian wedding color */
+    --secondary: 280 40% 45%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 28 30% 90%;
-    --muted-foreground: 30 10% 45%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 240 5% 50%;
 
-    --accent: 340 85% 65%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent gold - traditional Indian wedding accent */
+    --accent: 43 74% 58%;
+    --accent-foreground: 240 10% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 43 30% 85%;
-    --input: 43 20% 92%;
-    --ring: 43 74% 49%;
+    --border: 0 0% 88%;
+    --input: 0 0% 95%;
+    --ring: 0 0% 75%;
 
     --radius: 1rem;
     
-    --gold: 43 74% 49%;
-    --rose-gold: 340 55% 82%;
+    /* Silver Jubilee Color Palette */
+    --silver: 0 0% 75%;
+    --silver-light: 0 0% 85%;
+    --silver-dark: 0 0% 60%;
+    --gold: 43 74% 58%;
+    --rose-gold: 15 70% 70%;
     --champagne: 45 50% 88%;
     --burgundy: 0 50% 30%;
+    --royal-purple: 280 40% 45%;
+    --deep-maroon: 340 70% 35%;
     
-    --gradient-celebration: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--rose-gold)));
-    --gradient-card: linear-gradient(180deg, hsl(var(--champagne)), hsl(0 0% 100%));
+    /* Indian Wedding Inspired Gradients */
+    --gradient-celebration: linear-gradient(135deg, hsl(var(--silver)), hsl(var(--gold)));
+    --gradient-royal: linear-gradient(135deg, hsl(var(--royal-purple)), hsl(var(--deep-maroon)));
+    --gradient-card: linear-gradient(180deg, hsl(var(--silver-light)), hsl(0 0% 100%));
+    --gradient-silver-shine: linear-gradient(135deg, hsl(0 0% 85%), hsl(0 0% 95%), hsl(0 0% 85%));
     
-    --shadow-elegant: 0 10px 40px -10px hsl(var(--gold) / 0.3);
-    --shadow-card: 0 8px 32px -8px hsl(var(--gold) / 0.25);
+    /* Elegant Shadows with Silver/Gold tones */
+    --shadow-elegant: 0 10px 40px -10px hsl(0 0% 60% / 0.4);
+    --shadow-card: 0 8px 32px -8px hsl(var(--silver) / 0.3);
+    --shadow-gold: 0 8px 32px -8px hsl(var(--gold) / 0.25);
     
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -69,33 +84,34 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 30 20% 8%;
-    --foreground: 28 30% 95%;
+    /* Dark mode with rich Indian wedding colors */
+    --background: 280 30% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 30 15% 12%;
-    --card-foreground: 28 30% 95%;
+    --card: 280 25% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 30 15% 12%;
-    --popover-foreground: 28 30% 95%;
+    --popover: 280 25% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 43 74% 49%;
-    --primary-foreground: 30 15% 15%;
+    --primary: 0 0% 75%;
+    --primary-foreground: 240 10% 15%;
 
-    --secondary: 340 55% 82%;
-    --secondary-foreground: 30 15% 15%;
+    --secondary: 280 40% 50%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 30 15% 18%;
-    --muted-foreground: 28 20% 65%;
+    --muted: 280 20% 18%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 340 85% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 74% 60%;
+    --accent-foreground: 240 10% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 30 15% 20%;
-    --input: 30 15% 18%;
-    --ring: 43 74% 49%;
+    --border: 280 20% 25%;
+    --input: 280 20% 18%;
+    --ring: 0 0% 75%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
