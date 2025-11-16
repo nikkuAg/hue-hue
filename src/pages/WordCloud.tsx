@@ -51,8 +51,8 @@ export default function WordCloud() {
           // Add new blessing to cloud toasts
           setCloudToasts((prev) => {
             const updated = [{ id: newBlessing.id, message: newBlessing.message }, ...prev];
-            // Keep only last 5
-            return updated.slice(0, 1);
+            // Keep last 6 toasts visible
+            return updated.slice(0, 6);
           });
         },
       )
@@ -78,7 +78,7 @@ export default function WordCloud() {
         .from("blessings")
         .select("id, message")
         .order("created_at", { ascending: false })
-        .limit(1);
+        .limit(6);
 
       if (error) throw error;
 
@@ -160,7 +160,8 @@ export default function WordCloud() {
           <CloudToast
             key={toast.id}
             message={toast.message}
-            delay={index * 500} // Stagger the appearance
+            index={index}
+            delay={index * 200} // Stagger the appearance
             onRemove={() => {
               setCloudToasts((prev) => prev.filter((t) => t.id !== toast.id));
             }}
@@ -171,12 +172,13 @@ export default function WordCloud() {
         {loading ? (
           <div className="text-center text-muted-foreground">Loading blessings...</div>
         ) : blessings.length > 0 ? (
-          <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
+          <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-white">
             <div className="text-center mb-6">
+              <p className="text-lg font-semibold text-coral mb-2">🎉 Congratulations Pawan & Prachi! 🎉</p>
               <p className="text-sm text-muted-foreground">Drag to rotate • Scroll to zoom</p>
             </div>
 
-            <div className="h-[600px] w-full rounded-lg overflow-hidden bg-gradient-to-br from-navy/5 to-teal/5">
+            <div className="h-[600px] w-full rounded-lg overflow-hidden bg-navy/5">
               <Canvas camera={{ position: [0, 0, 12], fov: 60 }}>
                 <Suspense fallback={null}>
                   <WordCloud3D words={wordCloudData} key={blessings.length} />
