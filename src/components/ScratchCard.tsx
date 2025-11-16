@@ -58,27 +58,23 @@ export const ScratchCard = ({
       ctx.fillStyle = silverGradient;
       ctx.fillRect(0, 0, rect.width, rect.height);
 
-      // Draw subtle graphic in center using SVG path
+      // Draw visible graphic in center
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      const size = Math.min(rect.width, rect.height) * 0.5;
+      const size = Math.min(rect.width, rect.height) * 0.4;
       
-      // Create a very subtle graphic - just an outline
       ctx.save();
       ctx.translate(centerX, centerY);
-      ctx.scale(size / 24, size / 24); // Scale to fit
+      ctx.scale(size / 24, size / 24);
       
-      // Subtle gradient for the graphic
-      const graphicGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
-      graphicGradient.addColorStop(0, "hsl(0, 0%, 85%)");
-      graphicGradient.addColorStop(1, "hsl(0, 0%, 92%)");
+      // More visible gradient for the graphic
+      ctx.strokeStyle = "hsl(0, 0%, 75%)"; // Darker silver for visibility
+      ctx.fillStyle = "hsl(0, 0%, 82%)"; // Light fill
+      ctx.lineWidth = 1.2;
+      ctx.globalAlpha = 0.4; // More visible
       
-      ctx.strokeStyle = graphicGradient;
-      ctx.lineWidth = 0.5;
-      ctx.globalAlpha = 0.15; // Very subtle
-      
-      // Draw the selected graphic path
       const path = new Path2D(selectedGraphic.path);
+      ctx.fill(path);
       ctx.stroke(path);
       
       ctx.restore();
@@ -131,16 +127,15 @@ export const ScratchCard = ({
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
-    const currentX = (x - rect.left) * scaleX;
-    const currentY = (y - rect.top) * scaleY;
+    
+    // Calculate position correctly accounting for canvas scaling
+    const currentX = (x - rect.left) * 2; // Canvas is 2x scaled
+    const currentY = (y - rect.top) * 2;
 
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    ctx.lineWidth = 60 * scaleX;
+    ctx.lineWidth = 60;
 
     // Draw continuous line if we have a last point
     if (lastPointRef.current && isScratching) {
@@ -152,7 +147,7 @@ export const ScratchCard = ({
 
     // Draw circle at current position for smooth coverage
     ctx.beginPath();
-    ctx.arc(currentX, currentY, 30 * scaleX, 0, 2 * Math.PI);
+    ctx.arc(currentX, currentY, 30, 0, 2 * Math.PI);
     ctx.fill();
 
     lastPointRef.current = { x: currentX, y: currentY };
