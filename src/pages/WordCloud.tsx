@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, useRef } from "react";
+import { useEffect, useState, Suspense, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { CloudToast } from "@/components/CloudToast";
@@ -100,8 +100,8 @@ export default function WordCloud() {
     }
   };
 
-  // Process blessings into word cloud format
-  const getWordCloudData = () => {
+  // Process blessings into word cloud format - use useMemo to recalculate when blessings change
+  const wordCloudData = useMemo(() => {
     const wordFrequency: { [key: string]: number } = {};
 
     blessings.forEach(blessing => {
@@ -120,7 +120,7 @@ export default function WordCloud() {
       text,
       value,
     }));
-  };
+  }, [blessings]); // Recalculate whenever blessings change
 
 
   return (
@@ -188,7 +188,7 @@ export default function WordCloud() {
             <div className="h-[600px] w-full rounded-lg overflow-hidden bg-gradient-to-br from-navy/5 to-teal/5">
               <Canvas camera={{ position: [0, 0, 12], fov: 60 }}>
                 <Suspense fallback={null}>
-                  <WordCloud3D words={getWordCloudData()} />
+                  <WordCloud3D words={wordCloudData} key={blessings.length} />
                   <OrbitControls 
                     enableZoom={true}
                     enablePan={false}
