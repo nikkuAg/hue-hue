@@ -200,6 +200,13 @@ export const ScratchCard = ({
     lastPointRef.current = null;
   };
 
+  const handlePointerLeave = (e: React.PointerEvent) => {
+    // Don't stop scratching, just reset last point for smooth re-entry
+    if (isScratching) {
+      lastPointRef.current = null;
+    }
+  };
+
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg">
       <div className={cn(
@@ -217,7 +224,8 @@ export const ScratchCard = ({
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
+        onPointerLeave={handlePointerLeave}
+        onPointerCancel={handlePointerUp}
       />
     </div>
   );
