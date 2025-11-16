@@ -283,6 +283,7 @@ const Index = () => {
         {/* Setup State */}
         {gameState === "setup" && <div className="space-y-4 animate-fade-in">
             {!urlSessionCode && <>
+                <HostSetup onSessionCreated={handleHostSession} />
                 
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">or</p>
