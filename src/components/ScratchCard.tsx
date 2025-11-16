@@ -49,13 +49,13 @@ export const ScratchCard = ({
     ctx.scale(2, 2);
 
     if (showPattern) {
-      // Silver jubilee themed gradient background
-      const silverGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-      silverGradient.addColorStop(0, "hsl(0, 0%, 88%)");
-      silverGradient.addColorStop(0.5, "hsl(0, 0%, 95%)");
-      silverGradient.addColorStop(1, "hsl(0, 0%, 88%)");
+      // Botanical themed gradient background
+      const botanicalGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+      botanicalGradient.addColorStop(0, "hsl(165, 40%, 75%)");
+      botanicalGradient.addColorStop(0.5, "hsl(45, 35%, 93%)");
+      botanicalGradient.addColorStop(1, "hsl(165, 40%, 75%)");
       
-      ctx.fillStyle = silverGradient;
+      ctx.fillStyle = botanicalGradient;
       ctx.fillRect(0, 0, rect.width, rect.height);
 
       // Draw visible graphic in center
@@ -67,11 +67,11 @@ export const ScratchCard = ({
       ctx.translate(centerX, centerY);
       ctx.scale(size / 24, size / 24);
       
-      // More visible gradient for the graphic
-      ctx.strokeStyle = "hsl(0, 0%, 75%)"; // Darker silver for visibility
-      ctx.fillStyle = "hsl(0, 0%, 82%)"; // Light fill
+      // Teal and coral for the graphic
+      ctx.strokeStyle = "hsl(165, 40%, 60%)";
+      ctx.fillStyle = "hsl(12, 82%, 77%)";
       ctx.lineWidth = 1.2;
-      ctx.globalAlpha = 0.4; // More visible
+      ctx.globalAlpha = 0.5;
       
       const path = new Path2D(selectedGraphic.path);
       ctx.fill(path);
@@ -79,24 +79,24 @@ export const ScratchCard = ({
       
       ctx.restore();
 
-      // Decorative golden border
-      ctx.strokeStyle = "hsl(43, 74%, 58%)";
+      // Decorative coral border
+      ctx.strokeStyle = "hsl(12, 82%, 77%)";
       ctx.lineWidth = 3;
       ctx.strokeRect(4, 4, rect.width - 8, rect.height - 8);
 
       // Add text with theme colors
-      ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.1)";
       ctx.shadowBlur = 3;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
       
-      ctx.fillStyle = "hsl(280, 40%, 45%)"; // Royal purple
-      ctx.font = "bold 24px serif";
+      ctx.fillStyle = "hsl(210, 29%, 24%)"; // Navy
+      ctx.font = "bold 24px Playfair Display, serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
       ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, 20);
       
-      ctx.font = "16px sans-serif";
+      ctx.font = "16px Poppins, sans-serif";
       ctx.fillText("Reveal Your Prize", rect.width / 2, rect.height - 40);
       
       ctx.shadowColor = "transparent";

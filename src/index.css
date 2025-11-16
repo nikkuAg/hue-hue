@@ -8,61 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Indian Silver Jubilee Theme - Light colors with silver, gold accents */
-    --background: 0 0% 98%;
-    --foreground: 240 10% 15%;
+    /* Botanical Anniversary Theme - Inspired by the poster */
+    --background: 165 35% 92%;
+    --foreground: 210 29% 24%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card: 45 35% 93%;
+    --card-foreground: 210 29% 24%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover: 45 35% 93%;
+    --popover-foreground: 210 29% 24%;
 
-    /* Silver as primary - metallic silver tone */
-    --primary: 0 0% 75%;
-    --primary-foreground: 240 10% 15%;
+    /* Soft teal/mint as primary */
+    --primary: 165 40% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Royal purple/maroon for secondary - traditional Indian wedding color */
-    --secondary: 280 40% 45%;
+    /* Sage green for secondary */
+    --secondary: 155 20% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 240 5% 50%;
+    --muted: 165 20% 85%;
+    --muted-foreground: 210 15% 45%;
 
-    /* Accent gold - traditional Indian wedding accent */
-    --accent: 43 74% 58%;
-    --accent-foreground: 240 10% 15%;
+    /* Peach/coral for accent */
+    --accent: 12 82% 77%;
+    --accent-foreground: 210 29% 24%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 95%;
-    --ring: 0 0% 75%;
+    --border: 165 25% 80%;
+    --input: 45 30% 95%;
+    --ring: 165 40% 60%;
 
-    --radius: 1rem;
+    --radius: 1.2rem;
     
-    /* Silver Jubilee Color Palette */
-    --silver: 0 0% 75%;
-    --silver-light: 0 0% 85%;
-    --silver-dark: 0 0% 60%;
-    --gold: 43 74% 58%;
-    --rose-gold: 15 70% 70%;
-    --champagne: 45 50% 88%;
-    --burgundy: 0 50% 30%;
-    --royal-purple: 280 40% 45%;
-    --deep-maroon: 340 70% 35%;
+    /* Botanical Color Palette */
+    --mint: 165 40% 75%;
+    --mint-light: 165 35% 85%;
+    --mint-dark: 165 40% 60%;
+    --teal: 165 45% 55%;
+    --coral: 12 82% 77%;
+    --peach: 15 75% 82%;
+    --cream: 45 35% 93%;
+    --sage: 155 20% 50%;
+    --navy: 210 29% 24%;
+    --white-smoke: 0 0% 98%;
     
-    /* Indian Wedding Inspired Gradients */
-    --gradient-celebration: linear-gradient(135deg, hsl(var(--silver)), hsl(var(--gold)));
-    --gradient-royal: linear-gradient(135deg, hsl(var(--royal-purple)), hsl(var(--deep-maroon)));
-    --gradient-card: linear-gradient(180deg, hsl(var(--silver-light)), hsl(0 0% 100%));
-    --gradient-silver-shine: linear-gradient(135deg, hsl(0 0% 85%), hsl(0 0% 95%), hsl(0 0% 85%));
+    /* Botanical Gradients */
+    --gradient-botanical: linear-gradient(135deg, hsl(165 35% 92%), hsl(165 40% 85%));
+    --gradient-coral: linear-gradient(135deg, hsl(12 82% 77%), hsl(15 75% 82%));
+    --gradient-card: linear-gradient(180deg, hsl(45 35% 95%), hsl(45 35% 93%));
+    --gradient-mint: linear-gradient(135deg, hsl(165 40% 75%), hsl(165 35% 85%));
     
-    /* Elegant Shadows with Silver/Gold tones */
-    --shadow-elegant: 0 10px 40px -10px hsl(0 0% 60% / 0.4);
-    --shadow-card: 0 8px 32px -8px hsl(var(--silver) / 0.3);
-    --shadow-gold: 0 8px 32px -8px hsl(var(--gold) / 0.25);
+    /* Soft Shadows */
+    --shadow-elegant: 0 8px 32px -8px hsl(165 40% 60% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(165 40% 60% / 0.15);
+    --shadow-coral: 0 4px 20px -4px hsl(12 82% 77% / 0.2);
     
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -84,27 +85,27 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with rich Indian wedding colors */
-    --background: 280 30% 8%;
+    /* Dark mode with botanical theme */
+    --background: 165 30% 12%;
     --foreground: 0 0% 95%;
 
-    --card: 280 25% 12%;
+    --card: 165 25% 18%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 280 25% 12%;
+    --popover: 165 25% 18%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 0 0% 75%;
-    --primary-foreground: 240 10% 15%;
+    --primary: 165 40% 65%;
+    --primary-foreground: 210 29% 24%;
 
-    --secondary: 280 40% 50%;
+    --secondary: 155 25% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 280 20% 18%;
+    --muted: 165 20% 22%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 43 74% 60%;
-    --accent-foreground: 240 10% 15%;
+    --accent: 12 75% 70%;
+    --accent-foreground: 210 29% 24%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
