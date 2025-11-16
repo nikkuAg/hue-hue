@@ -408,21 +408,13 @@ const Index = () => {
         {/* Result State */}
         {gameState === "result" && <Card className="p-6 md:p-8 shadow-elegant border-gold/20 animate-fade-in">
             <div className="text-center space-y-6">
-              {winnerType === "image" ? <>
+              {isWinner ? <>
                   <div className="text-7xl md:text-9xl animate-float">🎁</div>
                   <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                    Congratulations!
+                    CONGRATULATIONS! 🎉
                   </h2>
                   <p className="text-lg md:text-xl text-foreground">
-                    You've won a special gift! 🎉
-                  </p>
-                </> : winnerType === "silver_jubilee" ? <>
-                  <div className="text-7xl md:text-9xl animate-float">🏆</div>
-                  <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold via-accent to-rose-gold bg-clip-text text-transparent">
-                    Silver Jubilee Winner!
-                  </h2>
-                  <p className="text-lg md:text-xl text-foreground">
-                    A very special prize awaits you! 🎊
+                    You're a Winner! A special gift awaits you!
                   </p>
                 </> : <>
                   <div className="text-6xl md:text-8xl animate-float">🌟</div>
