@@ -297,7 +297,7 @@ const Index = () => {
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-float">🌸</div>
                   <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
-                    Lucky Draw Scratch Card                                                                                                                                                                                                                                                                      
+                    Lucky Draw Scratch Card
                   </h2>
                   <p className="text-muted-foreground font-sans">
                     Enter your name to try your luck!
