@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScratchCard } from "@/components/ScratchCard";
 import { Confetti } from "@/components/Confetti";
-import { HostSetup } from "@/components/HostSetup";
 import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
@@ -26,8 +25,6 @@ const Index = () => {
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
   const [isWinner, setIsWinner] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [isHost, setIsHost] = useState(false);
-  const [hostCode, setHostCode] = useState<string | null>(null);
   const [winnerType, setWinnerType] = useState<string>("none");
   const {
     session,
@@ -40,23 +37,13 @@ const Index = () => {
       setSessionCodeInput(urlSessionCode.toUpperCase());
     }
 
-    // Check if user is returning host
-    const savedHostCode = localStorage.getItem("anniversary-host-code");
-    const savedSessionId = localStorage.getItem("anniversary-session-id");
-    if (savedHostCode && savedSessionId) {
-      setHostCode(savedHostCode);
-      setSessionId(savedSessionId);
-      setIsHost(true);
+    // Check if player already joined
+    const savedPlayerId = localStorage.getItem("anniversary-player-id");
+    const savedSession = localStorage.getItem("anniversary-player-session");
+    if (savedPlayerId && savedSession) {
+      setCurrentPlayerId(savedPlayerId);
+      setSessionId(savedSession);
       setGameState("waiting");
-    } else {
-      // Check if player already joined
-      const savedPlayerId = localStorage.getItem("anniversary-player-id");
-      const savedSession = localStorage.getItem("anniversary-player-session");
-      if (savedPlayerId && savedSession) {
-        setCurrentPlayerId(savedPlayerId);
-        setSessionId(savedSession);
-        setGameState("waiting");
-      }
     }
   }, []);
 
@@ -79,12 +66,6 @@ const Index = () => {
       }
     }
   }, [session, gameState, currentPlayerId]);
-  const handleHostSession = (newSessionId: string, newHostCode: string) => {
-    setSessionId(newSessionId);
-    setHostCode(newHostCode);
-    setIsHost(true);
-    setGameState("waiting");
-  };
   const handleJoinGame = async () => {
     if (!playerName.trim()) {
       toast.error("Please enter your name");
@@ -141,48 +122,6 @@ const Index = () => {
       toast.error("Failed to join game");
     }
   };
-  const handleStartGame = async () => {
-    if (!sessionId || !hostCode) return;
-    try {
-      // Verify host code
-      const {
-        data: sessionData
-      } = await supabase.from("game_sessions").select("host_code").eq("id", sessionId).single();
-      if (sessionData?.host_code !== hostCode) {
-        toast.error("Invalid host code");
-        return;
-      }
-
-      // Select exactly 3 winners: 2 with images, 1 with silver jubilee
-      const shuffled = [...players].sort(() => 0.5 - Math.random());
-      const winners = shuffled.slice(0, 3);
-
-      // Update all players
-      await Promise.all(players.map((player, index) => {
-        const winnerIndex = winners.findIndex(w => w.id === player.id);
-        let winner_type = "none";
-        if (winnerIndex === 0 || winnerIndex === 1) {
-          winner_type = "image";
-        } else if (winnerIndex === 2) {
-          winner_type = "silver_jubilee";
-        }
-        return supabase.from("players").update({
-          is_winner: winnerIndex !== -1,
-          winner_type
-        }).eq("id", player.id);
-      }));
-
-      // Update session status
-      await supabase.from("game_sessions").update({
-        status: "playing",
-        started_at: new Date().toISOString()
-      }).eq("id", sessionId);
-      toast.success("Game started! 🎉");
-    } catch (error) {
-      console.error("Start game error:", error);
-      toast.error("Failed to start game");
-    }
-  };
   const playSound = (isWinner: boolean) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
@@ -235,8 +174,18 @@ const Index = () => {
     }, 500);
   };
   const handleReset = async () => {
-    if (isHost && sessionId) {
-      await supabase.from("game_sessions").delete().eq("id", sessionId);
+    localStorage.clear();
+    setGameState("setup");
+    setPlayerName("");
+    setSessionCodeInput("");
+    setSessionId(null);
+    setCurrentPlayerId(null);
+    setIsWinner(false);
+    setShowConfetti(false);
+  };
+  const handleLeaveGame = () => {
+    if (currentPlayerId) {
+      supabase.from("players").delete().eq("id", currentPlayerId);
     }
     localStorage.clear();
     setGameState("setup");
@@ -246,8 +195,6 @@ const Index = () => {
     setCurrentPlayerId(null);
     setIsWinner(false);
     setShowConfetti(false);
-    setIsHost(false);
-    setHostCode(null);
   };
   return <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
       <CouplePhotoBackground />
@@ -307,25 +254,17 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Setup State */}
+         {/* Setup State - Player Join Only */}
         {gameState === "setup" && <div className="space-y-4 animate-fade-in">
-            {!urlSessionCode && <>
-                <HostSetup onSessionCreated={handleHostSession} />
-                
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">or</p>
-                </div>
-              </>}
-
             <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-float">🌸</div>
                   <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
-                    Lucky Draw Scratch Card
+                    Join Lucky Draw
                   </h2>
                   <p className="text-muted-foreground font-sans">
-                    Enter your name to try your luck!
+                    Enter the game code to participate in the scratch card lucky draw
                   </p>
                 </div>
                 
@@ -343,168 +282,115 @@ const Index = () => {
           </div>}
 
         {/* Waiting State */}
-        {gameState === "waiting" && !loading && <Card className="p-6 md:p-8 shadow-elegant border-gold/20 animate-fade-in">
+        {gameState === "waiting" && !loading && <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke animate-fade-in">
             <div className="space-y-6">
               <div className="text-center">
-                {isHost ? <>
-                    <Crown className="w-16 h-16 text-gold mx-auto mb-4 animate-pulse" />
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-2 bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                      Host Dashboard
-                    </h2>
-                    <div className="bg-gradient-to-r from-gold/20 to-accent/20 rounded-lg p-4 mb-4">
-                      <p className="text-sm text-muted-foreground mb-1">Game Code</p>
-                      <p className="text-3xl font-bold tracking-wider">{hostCode}</p>
-                    </div>
-                  </> : <>
-                    <Gift className="w-16 h-16 text-accent mx-auto mb-4 animate-float" />
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-2">
-                      Welcome! 🎊
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Waiting for the host to start the game...
-                    </p>
-                  </>}
+                <Gift className="w-16 h-16 text-coral mx-auto mb-4 animate-float" />
+                <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
+                  Welcome! 🎊
+                </h2>
+                <p className="text-muted-foreground font-sans">
+                  Waiting for the host to start the game...
+                </p>
               </div>
 
-              <div className="bg-gradient-to-br from-champagne/50 to-rose-gold/20 rounded-xl p-4 md:p-6">
+              <div className="bg-white-smoke rounded-lg p-4 md:p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Users className="w-5 h-5 text-foreground" />
-                  <h3 className="font-semibold text-foreground">
+                  <Users className="w-5 h-5 text-coral" />
+                  <h3 className="font-semibold text-navy font-sans">
                     Players Joined: {players.length}
                   </h3>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
-                  {players.map(player => <div key={player.id} className="bg-card rounded-lg p-3 text-center shadow-sm border border-border hover:border-gold/50 transition-colors">
-                      <span className="text-sm md:text-base">{player.name}</span>
+                  {players.map(player => <div key={player.id} className="bg-cream rounded-lg p-3 text-center shadow-sm border border-teal/20">
+                      <span className="text-sm md:text-base text-navy font-sans">{player.name}</span>
                     </div>)}
                 </div>
               </div>
 
-              {isHost && <>
-                  <div className="bg-gradient-to-br from-gold/10 to-accent/10 rounded-xl p-4">
-                    <p className="text-sm text-center font-medium text-foreground mb-2">
-                      Share this link with players:
-                    </p>
-                    <div className="flex gap-2">
-                      <Input readOnly value={`${window.location.origin}?code=${hostCode}`} className="text-sm font-mono" />
-                      <Button onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}?code=${hostCode}`);
-                  toast.success("Link copied!");
-                }} variant="outline" className="border-gold/30">
-                        Copy
-                      </Button>
-                    </div>
-                  </div>
-                  <Button onClick={handleStartGame} disabled={players.length < 1} className="w-full h-12 text-lg bg-gradient-to-r from-gold to-accent hover:opacity-90 disabled:opacity-50" size="lg">
-                    Start Game ({players.length} {players.length === 1 ? 'Player' : 'Players'})
-                  </Button>
-                </>}
+              <Button onClick={handleLeaveGame} variant="outline" className="w-full border-coral text-coral hover:bg-coral hover:text-white font-sans">
+                Leave Game
+              </Button>
             </div>
           </Card>}
 
         {/* Playing State */}
-        {gameState === "playing" && !isHost && <div className="space-y-6 animate-fade-in">
+        {gameState === "playing" && <div className="space-y-6 animate-fade-in">
             <div className="text-center">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-2">
+              <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
                 Scratch to Reveal! ✨
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground font-sans">
                 Use your finger or mouse to scratch the card
               </p>
             </div>
 
-            <div className="max-w-md mx-auto aspect-[3/4] md:aspect-[4/3]">
-              <ScratchCard onComplete={handleScratchComplete} content={<div className="w-full h-full bg-gradient-to-br from-card via-champagne to-rose-gold/30 flex items-center justify-center p-8 border-4 border-gold/30 rounded-2xl">
-                    {winnerType === "image" ? <div className="text-center space-y-4">
-                        {localStorage.getItem("anniversary-parents-image") ? <div className="space-y-4">
-                            <div className="w-full max-w-sm mx-auto rounded-lg overflow-hidden border-4 border-gold shadow-gold">
-                              <img src={localStorage.getItem("anniversary-parents-image")!} alt="Special Gift" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="space-y-2">
-                              <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                                WINNER!
-                              </h3>
-                              <p className="text-lg md:text-xl text-foreground font-semibold">
-                                You've won a special gift!
-                              </p>
-                            </div>
-                          </div> : <>
-                            <div className="text-6xl md:text-8xl animate-float">🎁</div>
-                            <div className="space-y-2">
-                              <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                                WINNER!
-                              </h3>
-                              <p className="text-lg md:text-xl text-foreground font-semibold">
-                                You've won a special gift!
-                              </p>
-                            </div>
-                          </>}
-                      </div> : winnerType === "silver_jubilee" ? <div className="text-center space-y-4">
-                        <div className="text-6xl md:text-8xl animate-float">🏆</div>
-                        <div className="space-y-2">
-                          <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold via-accent to-rose-gold bg-clip-text text-transparent">
-                            Silver Jubilee
-                          </h3>
-                          <p className="text-lg md:text-xl text-foreground font-semibold">
-                            Congratulations! 🎉
-                          </p>
-                        </div>
-                      </div> : <div className="text-center space-y-4">
-                        <div className="text-5xl md:text-7xl animate-float">💝</div>
-                        <div className="space-y-2">
-                          <h3 className="text-xl md:text-2xl font-semibold text-foreground">
-                            Thank You for Playing!
-                          </h3>
-                          <p className="text-sm md:text-base text-muted-foreground">
-                            We appreciate your participation
-                          </p>
-                        </div>
-                      </div>}
-                  </div>} />
+            <div className="flex justify-center">
+              <ScratchCard onComplete={handleScratchComplete} content={isWinner ? (
+                winnerType === "first" ? (
+                  <div className="text-center space-y-4 bg-gradient-to-br from-gold/20 to-accent/20 p-8 rounded-lg">
+                    <div className="text-6xl md:text-8xl animate-float">👑</div>
+                    <div className="space-y-2">
+                      <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                        1st PRIZE!
+                      </h3>
+                      <p className="text-lg md:text-xl text-navy font-semibold">
+                        Congratulations Champion! 🎉
+                      </p>
+                    </div>
+                  </div>
+                ) : winnerType === "second" ? (
+                  <div className="text-center space-y-4 bg-gradient-to-br from-champagne/40 to-rose-gold/20 p-8 rounded-lg">
+                    <div className="text-6xl md:text-8xl animate-float">🥈</div>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-rose-gold bg-clip-text text-transparent">
+                        2nd PRIZE!
+                      </h3>
+                      <p className="text-lg md:text-xl text-navy font-semibold">
+                        Amazing! You're a winner! 🎉
+                      </p>
+                    </div>
+                  </div>
+                ) : winnerType === "third" ? (
+                  <div className="text-center space-y-4 bg-gradient-to-br from-amber/20 to-orange/10 p-8 rounded-lg">
+                    <div className="text-6xl md:text-8xl animate-float">🥉</div>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                        3rd PRIZE!
+                      </h3>
+                      <p className="text-lg md:text-xl text-navy font-semibold">
+                        You've won a special gift!
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center space-y-4">
+                    <div className="text-6xl md:text-8xl animate-float">🎁</div>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                        WINNER!
+                      </h3>
+                      <p className="text-lg md:text-xl text-navy font-semibold">
+                        You've won a special gift!
+                      </p>
+                    </div>
+                  </div>
+                )
+              ) : (
+                <div className="text-center space-y-4">
+                  <div className="text-5xl md:text-7xl animate-float">💝</div>
+                  <div className="space-y-2">
+                    <h3 className="text-xl md:text-2xl font-semibold text-navy">
+                      Thank You for Playing!
+                    </h3>
+                    <p className="text-sm md:text-base text-muted-foreground">
+                      We appreciate your participation
+                    </p>
+                  </div>
+                </div>
+              )} />
             </div>
           </div>}
-
-        {/* Host Dashboard During Playing */}
-        {gameState === "playing" && isHost && <Card className="p-6 md:p-8 shadow-elegant border-gold/20 animate-fade-in">
-            <div className="space-y-6">
-              <div className="text-center">
-                <Crown className="w-16 h-16 text-gold mx-auto mb-4 animate-pulse" />
-                <h2 className="text-2xl md:text-3xl font-semibold mb-2 bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                  Game in Progress
-                </h2>
-                <p className="text-muted-foreground">Players are scratching their cards...</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-champagne/50 to-rose-gold/20 rounded-xl p-4 md:p-6">
-                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-gold" />
-                  Winners
-                </h3>
-                <div className="space-y-2">
-                  {players.filter(p => p.is_winner).map(player => <div key={player.id} className="bg-card rounded-lg p-3 border border-gold/30 shadow-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{player.name}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {(player as any).winner_type === "silver_jubilee" ? "🏆 Silver Jubilee" : "🎁 Gift Winner"}
-                          </span>
-                        </div>
-                      </div>)}
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-champagne/50 to-rose-gold/20 rounded-xl p-4 md:p-6">
-                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Users className="w-5 h-5 text-foreground" />
-                  All Players: {players.length}
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {players.map(player => <div key={player.id} className={`bg-card rounded-lg p-3 text-center shadow-sm border ${player.is_winner ? "border-gold/50" : "border-border"}`}>
-                      <span className="text-sm">{player.name}</span>
-                    </div>)}
-                </div>
-              </div>
-            </div>
-          </Card>}
 
         {/* Result State */}
         {gameState === "result" && <Card className="p-6 md:p-8 shadow-elegant border-gold/20 animate-fade-in">
@@ -535,9 +421,6 @@ const Index = () => {
                   </p>
                 </>}
 
-              {isHost && <Button onClick={handleReset} variant="outline" className="border-gold/30 hover:bg-gold/10">
-                  Reset Game
-                </Button>}
             </div>
           </Card>}
 
