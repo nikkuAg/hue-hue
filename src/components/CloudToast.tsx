@@ -5,31 +5,28 @@ interface CloudToastProps {
   message: string;
   onRemove: () => void;
   delay: number;
+  index: number;
 }
 
-export const CloudToast = ({ message, onRemove, delay }: CloudToastProps) => {
-  const [position] = useState(() => ({
-    top: Math.random() * 60 + 10, // 10-70% from top
-    left: Math.random() * 70 + 10, // 10-80% from left
-  }));
+export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps) => {
+  const [side] = useState(() => (index % 2 === 0 ? 'left' : 'right'));
+  const topPosition = 20 + (index * 12); // Stack them vertically with 12% spacing
 
   useEffect(() => {
     const timer = setTimeout(() => {
       onRemove();
-    }, 5000 + delay); // 5 seconds + staggered delay
+    }, 8000); // Show for 8 seconds
 
     return () => clearTimeout(timer);
-  }, [onRemove, delay]);
+  }, [onRemove]);
 
   return (
     <div
-      className="fixed pointer-events-none animate-float-up"
+      className="fixed pointer-events-none animate-slide-in-bounce z-50"
       style={{
-        top: `${position.top}%`,
-        left: `${position.left}%`,
-        zIndex: 100,
+        top: `${topPosition}%`,
+        [side]: '2rem',
         animationDelay: `${delay}ms`,
-        animationDuration: `${5000 + delay}ms`,
       }}
     >
       {/* Cloud shape */}
