@@ -154,8 +154,13 @@ export default function Admin() {
       return;
     }
 
-    // Randomly select winners
-    const shuffled = [...(players || [])].sort(() => Math.random() - 0.5);
+    // Fisher-Yates shuffle for proper randomization
+    const shuffled = [...(players || [])];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
     const winner1 = shuffled[0];
     const winner2 = shuffled[1];
     const winner3 = shuffled[2];
