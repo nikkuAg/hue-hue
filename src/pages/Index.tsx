@@ -14,11 +14,13 @@ import { toast } from "sonner";
 import { Sparkles, Users, Crown, Gift, Upload, Heart } from "lucide-react";
 import { Label } from "@/components/ui/label";
 type GameState = "setup" | "join" | "waiting" | "playing" | "result";
+
 const Index = () => {
   const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>("setup");
   const [playerName, setPlayerName] = useState("");
   const [sessionCodeInput, setSessionCodeInput] = useState(""); // For manual code entry
+  const [isJoining, setIsJoining] = useState(false); // Loading state for join button
   const urlParams = new URLSearchParams(window.location.search);
   const urlSessionCode = urlParams.get("code") || ""; // Code from shared link
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -81,6 +83,8 @@ const Index = () => {
     }
   }, [session, gameState, currentPlayerId]);
   const handleJoinGame = async () => {
+    if (isJoining) return; // Prevent multiple clicks
+    
     if (!playerName.trim()) {
       toast.error("Please enter your name");
       return;
@@ -92,6 +96,8 @@ const Index = () => {
       toast.error("Please enter the game code");
       return;
     }
+    
+    setIsJoining(true);
     try {
       // Find session by code
       const {
@@ -100,10 +106,12 @@ const Index = () => {
       } = await supabase.from("game_sessions").select("*").eq("host_code", codeToUse.toUpperCase()).single();
       if (sessionError || !sessionData) {
         toast.error("Invalid game code");
+        setIsJoining(false);
         return;
       }
       if (sessionData.status !== "waiting") {
         toast.error("This game has already started");
+        setIsJoining(false);
         return;
       }
       // Get or create persistent device ID
@@ -129,6 +137,7 @@ const Index = () => {
         localStorage.setItem("anniversary-player-id", existingPlayer.id);
         localStorage.setItem("anniversary-player-session", sessionData.id);
         toast.success("Welcome back! You've already joined this game.");
+        setIsJoining(false);
         return;
       }
 
@@ -147,6 +156,7 @@ const Index = () => {
         } else {
           toast.error("Failed to join game");
         }
+        setIsJoining(false);
         return;
       }
       localStorage.setItem("anniversary-player-id", playerData.id);
@@ -155,9 +165,11 @@ const Index = () => {
       setSessionId(sessionData.id);
       setGameState("waiting");
       toast.success("Welcome to the celebration!");
+      setIsJoining(false);
     } catch (error) {
       console.error("Join error:", error);
       toast.error("Failed to join game");
+      setIsJoining(false);
     }
   };
   const playSound = (isWinner: boolean) => {
@@ -304,8 +316,13 @@ const Index = () => {
                   
                   {/* Only show game code input if NOT coming from a shared link */}
                   {!urlSessionCode && <Input type="text" placeholder="Game Code (e.g., ABC123)" value={sessionCodeInput} onChange={e => setSessionCodeInput(e.target.value.toUpperCase())} className="text-lg h-12 border-teal/30 focus:border-teal text-center font-bold tracking-wider bg-white-smoke" maxLength={6} />}
-                  <Button onClick={handleJoinGame} className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral" size="lg">
-                    Join Game
+                  <Button 
+                    onClick={handleJoinGame} 
+                    disabled={isJoining}
+                    className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral disabled:opacity-50 disabled:cursor-not-allowed" 
+                    size="lg"
+                  >
+                    {isJoining ? "Joining..." : "Join Game"}
                   </Button>
                 </div>
               </div>
