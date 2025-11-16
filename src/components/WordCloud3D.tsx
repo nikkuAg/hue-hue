@@ -23,11 +23,15 @@ const WordItem = ({ word, position, size, color }: {
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Gentle rotation
-      meshRef.current.rotation.y += 0.003 * speed;
+      // Make the text always face the camera
+      meshRef.current.quaternion.copy(state.camera.quaternion);
+      
+      // Add subtle oscillation for liveliness
+      const time = state.clock.getElapsedTime();
+      const oscillation = Math.sin(time * speed) * 0.05;
+      meshRef.current.rotation.z = oscillation;
       
       // Floating effect
-      const time = state.clock.getElapsedTime();
       meshRef.current.position.y = position[1] + Math.sin(time * speed + position[0]) * 0.15;
     }
   });
