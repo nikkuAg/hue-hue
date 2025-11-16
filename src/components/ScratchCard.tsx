@@ -128,9 +128,9 @@ export const ScratchCard = ({
 
     const rect = canvas.getBoundingClientRect();
     
-    // Calculate position correctly accounting for canvas scaling
-    const currentX = (x - rect.left) * 2; // Canvas is 2x scaled
-    const currentY = (y - rect.top) * 2;
+    // Since ctx is scaled 2x, use display coordinates directly
+    const currentX = x - rect.left;
+    const currentY = y - rect.top;
 
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineJoin = "round";
