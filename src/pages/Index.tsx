@@ -325,17 +325,19 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="bg-white-smoke rounded-lg p-4 md:p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Users className="w-5 h-5 text-coral" />
-                  <h3 className="font-semibold text-navy font-sans">
-                    Players Joined: {players.length}
-                  </h3>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
-                  {players.map(player => <div key={player.id} className="bg-cream rounded-lg p-3 text-center shadow-sm border border-teal/20">
-                      <span className="text-sm md:text-base text-navy font-sans">{player.name}</span>
-                    </div>)}
+              <div className="bg-white-smoke rounded-lg p-6 md:p-8 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 bg-coral/20 rounded-full flex items-center justify-center">
+                    <Users className="w-8 h-8 text-coral" />
+                  </div>
+                  <div>
+                    <div className="text-4xl md:text-5xl font-bold text-navy mb-2">
+                      {players.length}
+                    </div>
+                    <p className="text-lg text-muted-foreground font-sans">
+                      {players.length === 1 ? 'Player Joined' : 'Players Joined'}
+                    </p>
+                  </div>
                 </div>
               </div>
 
