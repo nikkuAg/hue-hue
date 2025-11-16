@@ -312,7 +312,7 @@ const Index = () => {
         {/* Header */}
         <header className="text-center mb-8 md:mb-12">
           <div className="flex justify-center mb-6">
-            <div className="text-6xl md:text-7xl font-script text-navy animate-float">
+            <div className="text-6xl md:text-7xl font-script text-coral-dark animate-float">
               Pawan & Prachi
             </div>
           </div>
