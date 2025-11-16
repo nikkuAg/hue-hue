@@ -12,16 +12,7 @@ const blessingSchema = z.object({
     .string()
     .trim()
     .min(3, { message: "Blessing must be at least 3 characters" })
-    .max(500, { message: "Blessing must be less than 500 characters" })
-    .refine(
-      (msg) => {
-        // Basic profanity filter - add more words as needed
-        const inappropriateWords = ['spam', 'test123']; // Add actual filter words
-        const lowerMsg = msg.toLowerCase();
-        return !inappropriateWords.some(word => lowerMsg.includes(word));
-      },
-      { message: "Please keep your blessing respectful" }
-    ),
+    .max(500, { message: "Blessing must be less than 500 characters" }),
 });
 
 export const BlessingForm = () => {
@@ -37,6 +28,29 @@ export const BlessingForm = () => {
 
       setIsSubmitting(true);
 
+      // Check for profanity using AI moderation
+      const { data: moderationData, error: moderationError } = await supabase.functions
+        .invoke('moderate-content', {
+          body: { message: validatedData.message }
+        });
+
+      if (moderationError) {
+        console.error("Moderation error:", moderationError);
+        toast.error("Unable to verify content. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!moderationData?.isAppropriate) {
+        toast.error(
+          moderationData?.reason || 
+          "Your message contains inappropriate content. Please revise and keep it respectful for this family celebration."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      // If moderation passed, save the blessing
       const { error } = await supabase
         .from("blessings")
         .insert([{ message: validatedData.message }]);
