@@ -32,36 +32,42 @@ export default function WordCloud() {
   useEffect(() => {
     fetchBlessings();
     fetchRecentBlessings(); // Fetch top 5 on mount
-    
-    
+
     // Subscribe to new blessings with real-time updates
     const channel = supabase
-      .channel('blessings-cloud-changes')
+      .channel("blessings-cloud-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'blessings'
+          event: "INSERT",
+          schema: "public",
+          table: "blessings",
         },
         (payload) => {
+          console.log("Real-time event received:", payload);
           const newBlessing = payload.new as Blessing;
-          setBlessings(prev => [newBlessing, ...prev]);
-          
+          setBlessings((prev) => [newBlessing, ...prev]);
+
           // Add new blessing to cloud toasts
-          setCloudToasts(prev => {
-            const updated = [
-              { id: newBlessing.id, message: newBlessing.message },
-              ...prev
-            ];
+          setCloudToasts((prev) => {
+            const updated = [{ id: newBlessing.id, message: newBlessing.message }, ...prev];
             // Keep only last 5
-            return updated.slice(0, 5);
+            return updated.slice(0, 1);
           });
-        }
+        },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log("Subscription status:", status);
+        if (err) {
+          console.error("Subscription error:", err);
+        }
+        if (status === "SUBSCRIBED") {
+          console.log("Successfully subscribed to blessings changes!");
+        }
+      });
 
     return () => {
+      console.log("Cleaning up subscription...");
       supabase.removeChannel(channel);
     };
   }, []);
@@ -72,10 +78,10 @@ export default function WordCloud() {
         .from("blessings")
         .select("id, message")
         .order("created_at", { ascending: false })
-        .limit(5);
+        .limit(1);
 
       if (error) throw error;
-      
+
       if (data && data.length > 0) {
         setCloudToasts(data);
       }
@@ -86,10 +92,7 @@ export default function WordCloud() {
 
   const fetchBlessings = async () => {
     try {
-      const { data, error } = await supabase
-        .from("blessings")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("blessings").select("*").order("created_at", { ascending: false });
 
       if (error) throw error;
       setBlessings(data || []);
@@ -104,14 +107,14 @@ export default function WordCloud() {
   const wordCloudData = useMemo(() => {
     const wordFrequency: { [key: string]: number } = {};
 
-    blessings.forEach(blessing => {
+    blessings.forEach((blessing) => {
       const words = blessing.message
         .toLowerCase()
-        .replace(/[^\w\s]/g, '')
+        .replace(/[^\w\s]/g, "")
         .split(/\s+/)
-        .filter(word => word.length > 3); // Only words longer than 3 characters
+        .filter((word) => word.length > 3); // Only words longer than 3 characters
 
-      words.forEach(word => {
+      words.forEach((word) => {
         wordFrequency[word] = (wordFrequency[word] || 0) + 1;
       });
     });
@@ -121,7 +124,6 @@ export default function WordCloud() {
       value,
     }));
   }, [blessings]); // Recalculate whenever blessings change
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
@@ -133,10 +135,7 @@ export default function WordCloud() {
         {/* Header */}
         <header className="text-center mb-8">
           <div className="flex justify-center gap-4 mb-4">
-            <Button
-              onClick={() => navigate("/")}
-              variant="ghost"
-            >
+            <Button onClick={() => navigate("/")} variant="ghost">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Game
             </Button>
@@ -149,15 +148,11 @@ export default function WordCloud() {
               Send a Blessing
             </Button>
           </div>
-          
+
           <div className="flex justify-center mb-6">
-            <div className="text-6xl md:text-7xl font-script text-coral-dark animate-float">
-              Pawan & Prachi
-            </div>
+            <div className="text-6xl md:text-7xl font-script text-coral-dark animate-float">Pawan & Prachi</div>
           </div>
-          <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">
-            Blessings Word Cloud
-          </h1>
+          <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">Blessings Word Cloud</h1>
         </header>
 
         {/* Cloud Toasts for Latest Blessings */}
@@ -167,29 +162,25 @@ export default function WordCloud() {
             message={toast.message}
             delay={index * 500} // Stagger the appearance
             onRemove={() => {
-              setCloudToasts(prev => prev.filter(t => t.id !== toast.id));
+              setCloudToasts((prev) => prev.filter((t) => t.id !== toast.id));
             }}
           />
         ))}
 
         {/* Word Cloud */}
         {loading ? (
-          <div className="text-center text-muted-foreground">
-            Loading blessings...
-          </div>
+          <div className="text-center text-muted-foreground">Loading blessings...</div>
         ) : blessings.length > 0 ? (
           <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
             <div className="text-center mb-6">
-              <p className="text-sm text-muted-foreground">
-                Drag to rotate • Scroll to zoom
-              </p>
+              <p className="text-sm text-muted-foreground">Drag to rotate • Scroll to zoom</p>
             </div>
-            
+
             <div className="h-[600px] w-full rounded-lg overflow-hidden bg-gradient-to-br from-navy/5 to-teal/5">
               <Canvas camera={{ position: [0, 0, 12], fov: 60 }}>
                 <Suspense fallback={null}>
                   <WordCloud3D words={wordCloudData} key={blessings.length} />
-                  <OrbitControls 
+                  <OrbitControls
                     enableZoom={true}
                     enablePan={false}
                     minDistance={8}
@@ -204,9 +195,7 @@ export default function WordCloud() {
         ) : (
           <Card className="p-8 text-center shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
             <Heart className="w-16 h-16 text-coral mx-auto mb-4 opacity-50" />
-            <p className="text-lg text-muted-foreground">
-              No blessings yet. Be the first to share your wishes!
-            </p>
+            <p className="text-lg text-muted-foreground">No blessings yet. Be the first to share your wishes!</p>
             <Button
               onClick={() => navigate("/blessings")}
               className="mt-4 bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90"
@@ -216,7 +205,6 @@ export default function WordCloud() {
             </Button>
           </Card>
         )}
-
       </div>
     </div>
   );
