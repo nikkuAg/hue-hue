@@ -206,10 +206,9 @@ const Index = () => {
         // Check if player is winner
         const {
           data
-        } = await supabase.from("players").select("is_winner, winner_type").eq("id", currentPlayerId).single();
+        } = await supabase.from("players").select("is_winner").eq("id", currentPlayerId).single();
         const won = data?.is_winner || false;
         setIsWinner(won);
-        setWinnerType(data?.winner_type || "none");
 
         // Play sound effect
         playSound(won);
@@ -378,55 +377,17 @@ const Index = () => {
             <div className="flex justify-center px-4">
               <div className="w-full max-w-md h-[400px] md:h-[500px]">
                 <ScratchCard onComplete={handleScratchComplete} content={isWinner ? (
-                  winnerType === "first" ? (
-                    <div className="text-center space-y-4 bg-gradient-to-br from-gold/20 to-accent/20 p-8 rounded-lg">
-                      <div className="text-6xl md:text-8xl animate-float">👑</div>
-                      <div className="space-y-2">
-                        <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                          1st PRIZE!
-                        </h3>
-                        <p className="text-lg md:text-xl text-navy font-semibold">
-                          Congratulations Champion! 🎉
-                        </p>
-                      </div>
+                  <div className="text-center space-y-4 bg-gradient-to-br from-gold/20 to-accent/20 p-8 rounded-lg h-full flex flex-col items-center justify-center">
+                    <div className="text-7xl md:text-9xl animate-bounce">🎁</div>
+                    <div className="space-y-2">
+                      <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                        CONGRATULATIONS!
+                      </h3>
+                      <p className="text-lg md:text-xl text-navy font-semibold">
+                        You're a Winner! 🎉
+                      </p>
                     </div>
-                  ) : winnerType === "second" ? (
-                    <div className="text-center space-y-4 bg-gradient-to-br from-champagne/40 to-rose-gold/20 p-8 rounded-lg">
-                      <div className="text-6xl md:text-8xl animate-float">🥈</div>
-                      <div className="space-y-2">
-                        <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-rose-gold bg-clip-text text-transparent">
-                          2nd PRIZE!
-                        </h3>
-                        <p className="text-lg md:text-xl text-navy font-semibold">
-                          Amazing! You're a winner! 🎉
-                        </p>
-                      </div>
-                    </div>
-                  ) : winnerType === "third" ? (
-                    <div className="text-center space-y-4 bg-gradient-to-br from-amber/20 to-orange/10 p-8 rounded-lg">
-                      <div className="text-6xl md:text-8xl animate-float">🥉</div>
-                      <div className="space-y-2">
-                        <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-                          3rd PRIZE!
-                        </h3>
-                        <p className="text-lg md:text-xl text-navy font-semibold">
-                          You've won a special gift!
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center space-y-4">
-                      <div className="text-6xl md:text-8xl animate-float">🎁</div>
-                      <div className="space-y-2">
-                        <h3 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
-                          WINNER!
-                        </h3>
-                        <p className="text-lg md:text-xl text-navy font-semibold">
-                          You've won a special gift!
-                        </p>
-                      </div>
-                    </div>
-                  )
+                  </div>
                 ) : (
                   <div className="text-center space-y-4">
                     <div className="text-5xl md:text-7xl animate-float">💝</div>
