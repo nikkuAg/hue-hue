@@ -1,6 +1,7 @@
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingPetals } from "@/components/FloatingPetals";
+import { toast } from "sonner";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
 import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { Button } from "@/components/ui/button";
@@ -20,12 +21,14 @@ interface Blessing {
 export default function WordCloud() {
   const [blessings, setBlessings] = useState<Blessing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [latestBlessing, setLatestBlessing] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchBlessings();
     
-    // Subscribe to new blessings
+    // Subscribe to new blessings with real-time updates
     const channel = supabase
       .channel('blessings-cloud-changes')
       .on(
@@ -36,13 +39,30 @@ export default function WordCloud() {
           table: 'blessings'
         },
         (payload) => {
-          setBlessings(prev => [payload.new as Blessing, ...prev]);
+          const newBlessing = payload.new as Blessing;
+          setBlessings(prev => [newBlessing, ...prev]);
+          
+          // Show thought bubble toast for new blessing
+          setLatestBlessing(newBlessing.message);
+          
+          // Clear any existing timeout
+          if (toastTimeoutRef.current) {
+            clearTimeout(toastTimeoutRef.current);
+          }
+          
+          // Hide the thought bubble after 5 seconds
+          toastTimeoutRef.current = setTimeout(() => {
+            setLatestBlessing(null);
+          }, 5000);
         }
       )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -121,6 +141,24 @@ export default function WordCloud() {
             Blessings Word Cloud
           </h1>
         </header>
+
+        {/* Thought Bubble Toast for Latest Blessing */}
+        {latestBlessing && (
+          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+            <div className="relative bg-white rounded-2xl shadow-elegant p-6 max-w-md border-2 border-coral/30">
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div className="w-6 h-6 bg-white border-l-2 border-b-2 border-coral/30 transform rotate-45"></div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Heart className="w-6 h-6 text-coral flex-shrink-0 mt-1 animate-float" />
+                <div>
+                  <p className="text-sm font-semibold text-navy mb-1">New Blessing Received! 🌸</p>
+                  <p className="text-sm text-muted-foreground line-clamp-3">{latestBlessing}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Word Cloud */}
         {loading ? (

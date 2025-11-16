@@ -23,13 +23,15 @@ const WordItem = ({ word, position, size, color }: {
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Make the text always face the camera
-      meshRef.current.quaternion.copy(state.camera.quaternion);
+      // Make the text always face the camera (billboard effect) - keep it upright
+      meshRef.current.lookAt(state.camera.position);
+      // Keep text upright by resetting rotation except Y axis
+      meshRef.current.rotation.x = 0;
+      meshRef.current.rotation.z = 0;
       
-      // Add subtle oscillation for liveliness
+      // Floating effect
       const time = state.clock.getElapsedTime();
-      const oscillation = Math.sin(time * speed) * 0.05;
-      meshRef.current.rotation.z = oscillation;
+      meshRef.current.position.y = position[1] + Math.sin(time * speed + position[0]) * 0.15;
       
       // Floating effect
       meshRef.current.position.y = position[1] + Math.sin(time * speed + position[0]) * 0.15;
