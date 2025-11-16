@@ -312,16 +312,13 @@ const Index = () => {
         {/* Header */}
         <header className="text-center mb-8 md:mb-12">
           <div className="flex justify-center mb-6">
-            <div className="text-6xl md:text-7xl font-script text-coral animate-float">
+            <div className="text-6xl md:text-7xl font-script text-navy animate-float">
               Pawan & Prachi
             </div>
           </div>
           <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">
             Celebrating 25 Years of Togetherness
           </h1>
-          <p className="text-lg md:text-xl font-sans text-muted-foreground">
-            Lucky Draw Scratch Cards Game
-          </p>
         </header>
 
         {/* Setup State */}
@@ -344,10 +341,10 @@ const Index = () => {
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-float">🌸</div>
                   <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
-                    Join Game
+                    Lucky Draw Scratch Card Game
                   </h2>
                   <p className="text-muted-foreground font-sans">
-                    Enter the host code to join the celebration
+                    Enter the host code and your name to try your luck at winning exciting prizes!
                   </p>
                 </div>
                 
