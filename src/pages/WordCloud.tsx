@@ -130,10 +130,6 @@ export default function WordCloud() {
         ) : blessings.length > 0 ? (
           <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
             <div className="text-center mb-6">
-              <Heart className="w-10 h-10 text-coral mx-auto mb-3" />
-              <p className="text-lg text-muted-foreground mb-2">
-                {blessings.length} {blessings.length === 1 ? 'blessing' : 'blessings'} received
-              </p>
               <p className="text-sm text-muted-foreground">
                 Drag to rotate • Scroll to zoom
               </p>
@@ -171,27 +167,6 @@ export default function WordCloud() {
           </Card>
         )}
 
-        {/* Recent Blessings */}
-        {blessings.length > 0 && (
-          <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
-            <h3 className="text-xl md:text-2xl font-playfair font-semibold text-navy mb-4 text-center">
-              Recent Blessings
-            </h3>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {blessings.slice(0, 10).map((blessing) => (
-                <div
-                  key={blessing.id}
-                  className="p-4 bg-white-smoke rounded-lg border border-teal/10"
-                >
-                  <p className="text-navy font-sans italic">"{blessing.message}"</p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {new Date(blessing.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
       </div>
     </div>
   );
