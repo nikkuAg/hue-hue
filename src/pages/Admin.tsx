@@ -69,16 +69,20 @@ export default function Admin() {
   }, [navigate]);
 
   const loadActiveGameSession = async () => {
-    // Check for active game session
+    // Check for active game session (not ended)
     const { data: sessions } = await supabase
       .from("game_sessions")
       .select("*")
+      .in("status", ["waiting", "playing"])
       .order("created_at", { ascending: false })
       .limit(1);
 
     if (sessions && sessions.length > 0) {
       setCurrentSessionId(sessions[0].id);
       setHostCode(sessions[0].host_code);
+    } else {
+      setCurrentSessionId(null);
+      setHostCode(null);
     }
   };
 
