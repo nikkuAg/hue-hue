@@ -1,7 +1,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingPetals } from "@/components/FloatingPetals";
-import { toast } from "sonner";
+import { CloudToast } from "@/components/CloudToast";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
 import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,21 @@ interface Blessing {
   created_at: string;
 }
 
+interface CloudToastData {
+  id: string;
+  message: string;
+}
+
 export default function WordCloud() {
   const [blessings, setBlessings] = useState<Blessing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [latestBlessing, setLatestBlessing] = useState<string | null>(null);
-  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [cloudToasts, setCloudToasts] = useState<CloudToastData[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchBlessings();
+    fetchRecentBlessings(); // Fetch top 5 on mount
+    
     
     // Subscribe to new blessings with real-time updates
     const channel = supabase
@@ -42,29 +48,41 @@ export default function WordCloud() {
           const newBlessing = payload.new as Blessing;
           setBlessings(prev => [newBlessing, ...prev]);
           
-          // Show thought bubble toast for new blessing
-          setLatestBlessing(newBlessing.message);
-          
-          // Clear any existing timeout
-          if (toastTimeoutRef.current) {
-            clearTimeout(toastTimeoutRef.current);
-          }
-          
-          // Hide the thought bubble after 5 seconds
-          toastTimeoutRef.current = setTimeout(() => {
-            setLatestBlessing(null);
-          }, 5000);
+          // Add new blessing to cloud toasts
+          setCloudToasts(prev => {
+            const updated = [
+              { id: newBlessing.id, message: newBlessing.message },
+              ...prev
+            ];
+            // Keep only last 5
+            return updated.slice(0, 5);
+          });
         }
       )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
-      if (toastTimeoutRef.current) {
-        clearTimeout(toastTimeoutRef.current);
-      }
     };
   }, []);
+
+  const fetchRecentBlessings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("blessings")
+        .select("id, message")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setCloudToasts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching recent blessings:", error);
+    }
+  };
 
   const fetchBlessings = async () => {
     try {
@@ -142,23 +160,17 @@ export default function WordCloud() {
           </h1>
         </header>
 
-        {/* Thought Bubble Toast for Latest Blessing */}
-        {latestBlessing && (
-          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 max-w-md w-full px-4 animate-fade-in" style={{ zIndex: 9999 }}>
-            <div className="relative bg-white rounded-2xl shadow-2xl p-6 border-2 border-coral/30">
-              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
-                <div className="w-6 h-6 bg-white border-l-2 border-b-2 border-coral/30 transform rotate-45"></div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Heart className="w-6 h-6 text-coral flex-shrink-0 mt-1 animate-float" />
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-navy mb-1">New Blessing Received! 🌸</p>
-                  <p className="text-sm text-muted-foreground line-clamp-3">{latestBlessing}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Cloud Toasts for Latest Blessings */}
+        {cloudToasts.map((toast, index) => (
+          <CloudToast
+            key={toast.id}
+            message={toast.message}
+            delay={index * 500} // Stagger the appearance
+            onRemove={() => {
+              setCloudToasts(prev => prev.filter(t => t.id !== toast.id));
+            }}
+          />
+        ))}
 
         {/* Word Cloud */}
         {loading ? (
