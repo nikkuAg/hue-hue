@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Botanical Anniversary Theme - Inspired by the poster */
-    --background: 165 35% 85%;
+    --background: 165 35% 78%;
     --foreground: 210 29% 24%;
 
     --card: 45 35% 93%;
