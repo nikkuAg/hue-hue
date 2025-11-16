@@ -165,41 +165,49 @@ export default function Admin() {
     const winner2 = shuffled[1];
     const winner3 = shuffled[2];
 
-    // Update winners
-    const updates = [];
-    if (winner1) {
-      updates.push(
-        supabase
+    // Update winners one by one to ensure they're properly set
+    try {
+      if (winner1) {
+        const { error: error1 } = await supabase
           .from("players")
           .update({ is_winner: true, winner_type: "first" })
-          .eq("id", winner1.id)
-      );
-    }
-    if (winner2) {
-      updates.push(
-        supabase
+          .eq("id", winner1.id);
+        
+        if (error1) {
+          console.error("Failed to set first winner:", error1);
+          toast.error("Failed to assign first winner");
+          return;
+        }
+      }
+      
+      if (winner2) {
+        const { error: error2 } = await supabase
           .from("players")
           .update({ is_winner: true, winner_type: "second" })
-          .eq("id", winner2.id)
-      );
-    }
-    if (winner3) {
-      updates.push(
-        supabase
+          .eq("id", winner2.id);
+        
+        if (error2) {
+          console.error("Failed to set second winner:", error2);
+          toast.error("Failed to assign second winner");
+          return;
+        }
+      }
+      
+      if (winner3) {
+        const { error: error3 } = await supabase
           .from("players")
           .update({ is_winner: true, winner_type: "third" })
-          .eq("id", winner3.id)
-      );
-    }
-
-    // Wait for all winner updates to complete
-    const results = await Promise.all(updates);
-    
-    // Check if any updates failed
-    const failedUpdates = results.filter(result => result.error);
-    if (failedUpdates.length > 0) {
-      console.error("Failed to update some winners:", failedUpdates);
-      toast.error("Failed to assign all winners");
+          .eq("id", winner3.id);
+        
+        if (error3) {
+          console.error("Failed to set third winner:", error3);
+          toast.error("Failed to assign third winner");
+          return;
+        }
+      }
+    } catch (err) {
+      console.error("Error assigning winners:", err);
+      toast.error("Failed to decide winners");
       return;
     }
 
