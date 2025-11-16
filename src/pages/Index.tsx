@@ -297,6 +297,13 @@ const Index = () => {
             >
               View Word Cloud
             </Button>
+            <Button
+              onClick={() => navigate("/auth")}
+              variant="outline"
+              className="border-navy text-navy hover:bg-navy hover:text-white transition-colors"
+            >
+              Admin Login
+            </Button>
           </div>
         </header>
 
