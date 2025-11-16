@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      blessings: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+        }
+        Relationships: []
+      }
       game_sessions: {
         Row: {
           created_at: string
