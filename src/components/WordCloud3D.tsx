@@ -95,13 +95,42 @@ const Particles = () => {
 export const WordCloud3D = ({ words }: WordCloud3DProps) => {
   const colors = ['#E97777', '#FF9F9F', '#FCDDB0', '#40A578', '#5B8E55', '#FF6B9D'];
   
-  const wordPositions = useMemo(() => {
+  // Ensure minimum number of words for a full sphere (at least 30)
+  const minWords = 30;
+  const expandedWords = useMemo(() => {
     if (words.length === 0) return [];
     
-    return words.map((word, index) => {
-      // Fibonacci sphere distribution
-      const phi = Math.acos(-1 + (2 * index) / words.length);
-      const theta = Math.sqrt(words.length * Math.PI) * phi;
+    if (words.length < minWords) {
+      // Repeat words to fill the sphere
+      const expanded = [];
+      let currentIndex = 0;
+      
+      for (let i = 0; i < minWords; i++) {
+        expanded.push({
+          ...words[currentIndex % words.length],
+          // Add slight variation to repeated words
+          displayText: words[currentIndex % words.length].text,
+          originalIndex: currentIndex % words.length,
+        });
+        currentIndex++;
+      }
+      return expanded;
+    }
+    
+    return words.map((word, index) => ({
+      ...word,
+      displayText: word.text,
+      originalIndex: index,
+    }));
+  }, [words]);
+  
+  const wordPositions = useMemo(() => {
+    if (expandedWords.length === 0) return [];
+    
+    return expandedWords.map((word, index) => {
+      // Fibonacci sphere distribution for even spacing
+      const phi = Math.acos(-1 + (2 * index) / expandedWords.length);
+      const theta = Math.sqrt(expandedWords.length * Math.PI) * phi;
       
       const radius = 4.5;
       return {
@@ -111,10 +140,10 @@ export const WordCloud3D = ({ words }: WordCloud3DProps) => {
           radius * Math.cos(phi),
         ] as [number, number, number],
         size: Math.min(Math.max(word.value * 0.12, 0.4), 1.0),
-        color: colors[index % colors.length]
+        color: colors[word.originalIndex % colors.length]
       };
     });
-  }, [words]);
+  }, [expandedWords]);
 
   if (words.length === 0) {
     return (
@@ -143,12 +172,12 @@ export const WordCloud3D = ({ words }: WordCloud3DProps) => {
       
       <Particles />
       
-      {words.map((word, index) => {
+      {expandedWords.map((word, index) => {
         const { position, size, color } = wordPositions[index];
         return (
           <WordItem
-            key={`${word.text}-${index}`}
-            word={word.text}
+            key={`${word.displayText}-${index}`}
+            word={word.displayText}
             position={position}
             size={size}
             color={color}
