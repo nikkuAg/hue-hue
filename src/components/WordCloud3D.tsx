@@ -23,22 +23,12 @@ const WordItem = ({ word, position, size, color }: {
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Billboard effect - make text face camera while staying upright
+      // Get camera position
       const camera = state.camera;
-      const textPosition = meshRef.current.getWorldPosition(new THREE.Vector3());
       
-      // Calculate direction from text to camera
-      const direction = new THREE.Vector3();
-      direction.subVectors(camera.position, textPosition).normalize();
-      
-      // Create a quaternion that faces the camera
-      const quaternion = new THREE.Quaternion();
-      const matrix = new THREE.Matrix4();
-      matrix.lookAt(textPosition, camera.position, camera.up);
-      quaternion.setFromRotationMatrix(matrix);
-      
-      // Apply the rotation
-      meshRef.current.quaternion.copy(quaternion);
+      // Make text billboard (face camera) but prevent inversion
+      // Simply copy camera rotation for perfect facing
+      meshRef.current.quaternion.copy(camera.quaternion);
       
       // Floating effect
       const time = state.clock.getElapsedTime();
