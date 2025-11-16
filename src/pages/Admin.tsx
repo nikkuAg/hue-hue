@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Trash2, LogOut, Shield } from "lucide-react";
+import { Trash2, LogOut, Shield, Play, Square, Copy, Users } from "lucide-react";
+import { useGameSession } from "@/hooks/useGameSession";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +30,10 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [hostCode, setHostCode] = useState<string | null>(null);
+  
+  const { session, players } = useGameSession(currentSessionId);
 
   useEffect(() => {
     const checkAdminAccess = async () => {
@@ -57,10 +62,25 @@ export default function Admin() {
       setIsAdmin(true);
       setCheckingAuth(false);
       loadBlessings();
+      loadActiveGameSession();
     };
 
     checkAdminAccess();
   }, [navigate]);
+
+  const loadActiveGameSession = async () => {
+    // Check for active game session
+    const { data: sessions } = await supabase
+      .from("game_sessions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (sessions && sessions.length > 0) {
+      setCurrentSessionId(sessions[0].id);
+      setHostCode(sessions[0].host_code);
+    }
+  };
 
   const loadBlessings = async () => {
     setLoading(true);
@@ -96,6 +116,118 @@ export default function Admin() {
     navigate("/");
   };
 
+  const generateCode = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
+
+  const handleCreateSession = async () => {
+    const code = generateCode();
+
+    const { data, error } = await supabase
+      .from("game_sessions")
+      .insert([{ host_code: code, status: "waiting" }])
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Failed to create game session");
+      console.error(error);
+      return;
+    }
+
+    setCurrentSessionId(data.id);
+    setHostCode(code);
+    toast.success("Game session created!");
+  };
+
+  const handleStartGame = async () => {
+    if (!currentSessionId) return;
+
+    const playerCount = players?.length || 0;
+    if (playerCount === 0) {
+      toast.error("No players have joined yet");
+      return;
+    }
+
+    // Randomly select winners
+    const shuffled = [...(players || [])].sort(() => Math.random() - 0.5);
+    const winner1 = shuffled[0];
+    const winner2 = shuffled[1];
+    const winner3 = shuffled[2];
+
+    // Update winners
+    const updates = [];
+    if (winner1) {
+      updates.push(
+        supabase
+          .from("players")
+          .update({ is_winner: true, winner_type: "first" })
+          .eq("id", winner1.id)
+      );
+    }
+    if (winner2) {
+      updates.push(
+        supabase
+          .from("players")
+          .update({ is_winner: true, winner_type: "second" })
+          .eq("id", winner2.id)
+      );
+    }
+    if (winner3) {
+      updates.push(
+        supabase
+          .from("players")
+          .update({ is_winner: true, winner_type: "third" })
+          .eq("id", winner3.id)
+      );
+    }
+
+    await Promise.all(updates);
+
+    // Start the session
+    const { error } = await supabase
+      .from("game_sessions")
+      .update({ status: "playing", started_at: new Date().toISOString() })
+      .eq("id", currentSessionId);
+
+    if (error) {
+      toast.error("Failed to start game");
+      console.error(error);
+    } else {
+      toast.success("Game started! Winners selected.");
+    }
+  };
+
+  const handleEndGame = async () => {
+    if (!currentSessionId) return;
+
+    const { error } = await supabase
+      .from("game_sessions")
+      .update({ status: "ended" })
+      .eq("id", currentSessionId);
+
+    if (error) {
+      toast.error("Failed to end game");
+      console.error(error);
+    } else {
+      toast.success("Game ended");
+      setCurrentSessionId(null);
+      setHostCode(null);
+    }
+  };
+
+  const copyGameLink = () => {
+    if (!hostCode) return;
+    const link = `${window.location.origin}/?code=${hostCode}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Game link copied to clipboard!");
+  };
+
   if (checkingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cream to-white-smoke">
@@ -110,8 +242,8 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream to-white-smoke p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="w-10 h-10 text-coral" />
             <div>
@@ -119,7 +251,7 @@ export default function Admin() {
                 Admin Panel
               </h1>
               <p className="text-muted-foreground font-sans">
-                Manage blessings and content
+                Manage blessings, games, and content
               </p>
             </div>
           </div>
@@ -133,6 +265,93 @@ export default function Admin() {
           </Button>
         </div>
 
+        {/* Game Management */}
+        <Card className="p-6 shadow-card border-teal/20">
+          <h2 className="text-2xl font-playfair font-semibold text-navy mb-4">
+            Game Management
+          </h2>
+
+          {!currentSessionId ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No active game session</p>
+              <Button
+                onClick={handleCreateSession}
+                className="bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Create New Game Session
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-white-smoke rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Game Code</p>
+                  <p className="text-2xl font-bold text-navy">{hostCode}</p>
+                </div>
+                <Button
+                  onClick={copyGameLink}
+                  variant="outline"
+                  className="border-teal text-teal hover:bg-teal hover:text-white"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Link
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-white-smoke rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Users className="w-6 h-6 text-coral" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Players Joined</p>
+                    <p className="text-xl font-bold text-navy">{players?.length || 0}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-lg font-semibold text-navy capitalize">
+                    {session?.status || "waiting"}
+                  </p>
+                </div>
+              </div>
+
+              {players && players.length > 0 && (
+                <div className="p-4 bg-white-smoke rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">Registered Players</p>
+                  <div className="space-y-1">
+                    {players.map((player) => (
+                      <p key={player.id} className="text-navy">
+                        {player.name}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                {session?.status === "waiting" && (
+                  <Button
+                    onClick={handleStartGame}
+                    className="flex-1 bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Start Game
+                  </Button>
+                )}
+                <Button
+                  onClick={handleEndGame}
+                  variant="outline"
+                  className="flex-1 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                >
+                  <Square className="w-4 h-4 mr-2" />
+                  End Game
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* Blessings Management */}
         <Card className="p-6 shadow-card border-teal/20">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-playfair font-semibold text-navy">
