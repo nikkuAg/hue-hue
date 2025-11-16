@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
@@ -6,8 +6,10 @@ import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Heart, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ReactWordcloud from "react-wordcloud";
 import { Card } from "@/components/ui/card";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { WordCloud3D } from "@/components/WordCloud3D";
 
 interface Blessing {
   id: string;
@@ -82,16 +84,6 @@ export default function WordCloud() {
     }));
   };
 
-  const wordCloudOptions = {
-    rotations: 2,
-    rotationAngles: [0, 90] as [number, number],
-    fontSizes: [20, 80] as [number, number],
-    colors: ['#E97777', '#FF9F9F', '#FCDDB0', '#40A578', '#5B8E55'],
-    enableTooltip: true,
-    deterministic: true,
-    fontFamily: 'Playfair Display',
-    padding: 2,
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
@@ -139,16 +131,28 @@ export default function WordCloud() {
           <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
             <div className="text-center mb-6">
               <Heart className="w-10 h-10 text-coral mx-auto mb-3" />
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground mb-2">
                 {blessings.length} {blessings.length === 1 ? 'blessing' : 'blessings'} received
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Drag to rotate • Scroll to zoom
               </p>
             </div>
             
-            <div className="h-[500px] w-full">
-              <ReactWordcloud
-                words={getWordCloudData()}
-                options={wordCloudOptions}
-              />
+            <div className="h-[600px] w-full rounded-lg overflow-hidden bg-gradient-to-br from-navy/5 to-teal/5">
+              <Canvas camera={{ position: [0, 0, 12], fov: 60 }}>
+                <Suspense fallback={null}>
+                  <WordCloud3D words={getWordCloudData()} />
+                  <OrbitControls 
+                    enableZoom={true}
+                    enablePan={false}
+                    minDistance={8}
+                    maxDistance={20}
+                    autoRotate
+                    autoRotateSpeed={0.5}
+                  />
+                </Suspense>
+              </Canvas>
             </div>
           </Card>
         ) : (
