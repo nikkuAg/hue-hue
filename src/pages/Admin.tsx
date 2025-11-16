@@ -192,9 +192,18 @@ export default function Admin() {
       );
     }
 
-    await Promise.all(updates);
+    // Wait for all winner updates to complete
+    const results = await Promise.all(updates);
+    
+    // Check if any updates failed
+    const failedUpdates = results.filter(result => result.error);
+    if (failedUpdates.length > 0) {
+      console.error("Failed to update some winners:", failedUpdates);
+      toast.error("Failed to assign all winners");
+      return;
+    }
 
-    // Start the session
+    // Start the session only after winners are assigned
     const { error } = await supabase
       .from("game_sessions")
       .update({ status: "playing", started_at: new Date().toISOString() })
