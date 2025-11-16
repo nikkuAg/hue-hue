@@ -165,13 +165,12 @@ export default function Admin() {
     const winner2 = shuffled[1];
     const winner3 = shuffled[2];
 
-    // Update winners one by one to ensure they're properly set
-    // Using the allowed winner_type values from the database constraint
+    // Update winners - all winners are equal now
     try {
       if (winner1) {
         const { error: error1 } = await supabase
           .from("players")
-          .update({ is_winner: true, winner_type: "image" })
+          .update({ is_winner: true })
           .eq("id", winner1.id);
         
         if (error1) {
@@ -184,7 +183,7 @@ export default function Admin() {
       if (winner2) {
         const { error: error2 } = await supabase
           .from("players")
-          .update({ is_winner: true, winner_type: "silver_jubilee" })
+          .update({ is_winner: true })
           .eq("id", winner2.id);
         
         if (error2) {
@@ -197,7 +196,7 @@ export default function Admin() {
       if (winner3) {
         const { error: error3 } = await supabase
           .from("players")
-          .update({ is_winner: true, winner_type: "silver_jubilee" })
+          .update({ is_winner: true })
           .eq("id", winner3.id);
         
         if (error3) {
