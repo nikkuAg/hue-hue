@@ -53,10 +53,11 @@ const Index = () => {
     if (session.status === "playing" && gameState === "waiting") {
       // Fetch winner status before showing scratch card
       if (currentPlayerId) {
-        supabase.from("players").select("winner_type").eq("id", currentPlayerId).single().then(({
+        supabase.from("players").select("is_winner, winner_type").eq("id", currentPlayerId).single().then(({
           data
         }) => {
           if (data) {
+            setIsWinner(data.is_winner || false);
             setWinnerType(data.winner_type || "none");
           }
           setGameState("playing");
