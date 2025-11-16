@@ -281,14 +281,23 @@ const Index = () => {
           <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">
             Celebrating 25 Years of Togetherness
           </h1>
-          <Button
-            onClick={() => navigate("/blessings")}
-            variant="outline"
-            className="border-coral text-coral hover:bg-coral hover:text-white transition-colors"
-          >
-            <Heart className="mr-2 h-4 w-4" />
-            Share Your Blessings
-          </Button>
+          <div className="flex justify-center gap-4">
+            <Button
+              onClick={() => navigate("/blessings")}
+              variant="outline"
+              className="border-coral text-coral hover:bg-coral hover:text-white transition-colors"
+            >
+              <Heart className="mr-2 h-4 w-4" />
+              Share Blessings
+            </Button>
+            <Button
+              onClick={() => navigate("/blessings/cloud")}
+              variant="outline"
+              className="border-teal text-teal hover:bg-teal hover:text-white transition-colors"
+            >
+              View Word Cloud
+            </Button>
+          </div>
         </header>
 
         {/* Setup State */}
