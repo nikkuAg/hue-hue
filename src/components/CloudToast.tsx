@@ -10,43 +10,46 @@ interface CloudToastProps {
 
 export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps) => {
   const [side] = useState(() => (index % 2 === 0 ? 'left' : 'right'));
-  const topPosition = 20 + (index * 12); // Stack them vertically with 12% spacing
+  const [position] = useState(() => ({
+    top: 15 + (index * 13) + (Math.random() * 4 - 2), // Stack with random offset
+    horizontal: Math.random() * 3, // Random horizontal offset 0-3rem
+  }));
 
   useEffect(() => {
     const timer = setTimeout(() => {
       onRemove();
-    }, 8000); // Show for 8 seconds
+    }, 10000); // Show for 10 seconds
 
     return () => clearTimeout(timer);
   }, [onRemove]);
 
   return (
     <div
-      className="fixed pointer-events-none animate-slide-in-bounce z-50"
+      className="fixed pointer-events-none z-50 animate-cloud-float"
       style={{
-        top: `${topPosition}%`,
-        [side]: '2rem',
+        top: `${position.top}%`,
+        [side]: `${position.horizontal}rem`,
         animationDelay: `${delay}ms`,
       }}
     >
       {/* Cloud shape */}
-      <div className="relative animate-bounce-gentle">
+      <div className="relative">
         {/* Cloud body using rounded divs to create cloud shape */}
-        <div className="relative bg-white rounded-full shadow-2xl">
+        <div className="relative bg-white/95 backdrop-blur-sm rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
           {/* Main cloud circles */}
           <div className="flex items-end">
-            <div className="w-16 h-16 bg-white rounded-full border-2 border-coral/20"></div>
-            <div className="w-20 h-20 bg-white rounded-full -ml-6 border-2 border-coral/20"></div>
-            <div className="w-16 h-16 bg-white rounded-full -ml-6 border-2 border-coral/20"></div>
+            <div className="w-20 h-20 bg-white/95 rounded-full border-2 border-coral/30 shadow-lg"></div>
+            <div className="w-24 h-24 bg-white/95 rounded-full -ml-7 border-2 border-coral/30 shadow-lg"></div>
+            <div className="w-20 h-20 bg-white/95 rounded-full -ml-7 border-2 border-coral/30 shadow-lg"></div>
           </div>
           {/* Cloud base */}
-          <div className="absolute -bottom-3 left-2 right-2 h-8 bg-white border-2 border-t-0 border-coral/20 rounded-b-full"></div>
+          <div className="absolute -bottom-4 left-3 right-3 h-10 bg-white/95 border-2 border-t-0 border-coral/30 rounded-b-full shadow-lg"></div>
           
           {/* Content */}
-          <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div className="text-center max-w-[200px]">
-              <Heart className="w-4 h-4 text-coral mx-auto mb-1 animate-float" />
-              <p className="text-xs text-navy font-sans line-clamp-3 leading-tight">
+          <div className="absolute inset-0 flex items-center justify-center p-7">
+            <div className="text-center max-w-[220px]">
+              <Heart className="w-5 h-5 text-coral mx-auto mb-2 animate-float" />
+              <p className="text-[13px] text-navy font-sans line-clamp-3 leading-snug font-medium">
                 {message}
               </p>
             </div>
