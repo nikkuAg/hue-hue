@@ -13,7 +13,7 @@ export interface Player {
 export interface GameSession {
   id: string;
   host_code: string;
-  status: "waiting" | "playing" | "completed";
+  status: "waiting" | "playing" | "completed" | "ended";
   created_at: string;
   started_at: string | null;
 }
@@ -41,7 +41,7 @@ export const useGameSession = (sessionId: string | null) => {
         setSession({
           id: data.id,
           host_code: data.host_code,
-          status: data.status as "waiting" | "playing" | "completed",
+          status: data.status as "waiting" | "playing" | "completed" | "ended",
           created_at: data.created_at,
           started_at: data.started_at,
         });
@@ -80,7 +80,7 @@ export const useGameSession = (sessionId: string | null) => {
             setSession({
               id: updated.id,
               host_code: updated.host_code,
-              status: updated.status as "waiting" | "playing" | "completed",
+              status: updated.status as "waiting" | "playing" | "completed" | "ended",
               created_at: updated.created_at,
               started_at: updated.started_at,
             });

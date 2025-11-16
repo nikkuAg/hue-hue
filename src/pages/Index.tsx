@@ -50,6 +50,19 @@ const Index = () => {
   // Watch for session status changes and fetch winner_type
   useEffect(() => {
     if (!session) return;
+    
+    // Handle game ended
+    if (session.status === "ended") {
+      toast.info("This game has ended");
+      localStorage.removeItem("anniversary-player-id");
+      localStorage.removeItem("anniversary-player-session");
+      setGameState("setup");
+      setSessionId(null);
+      setCurrentPlayerId(null);
+      return;
+    }
+    
+    // Handle game started
     if (session.status === "playing" && gameState === "waiting") {
       // Fetch winner status before showing scratch card
       if (currentPlayerId) {
@@ -93,7 +106,31 @@ const Index = () => {
         toast.error("This game has already started");
         return;
       }
-      const deviceId = crypto.randomUUID();
+      // Get or create persistent device ID
+      let deviceId = localStorage.getItem("anniversary-device-id");
+      if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        localStorage.setItem("anniversary-device-id", deviceId);
+      }
+
+      // Check if this device already joined this session
+      const { data: existingPlayer, error: checkError } = await supabase
+        .from("players")
+        .select("*")
+        .eq("session_id", sessionData.id)
+        .eq("device_id", deviceId)
+        .maybeSingle();
+
+      if (existingPlayer) {
+        // Player already joined this session, restore their data
+        setCurrentPlayerId(existingPlayer.id);
+        setSessionId(sessionData.id);
+        setGameState("waiting");
+        localStorage.setItem("anniversary-player-id", existingPlayer.id);
+        localStorage.setItem("anniversary-player-session", sessionData.id);
+        toast.success("Welcome back! You've already joined this game.");
+        return;
+      }
 
       // Add player to session
       const {
