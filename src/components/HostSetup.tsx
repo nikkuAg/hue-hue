@@ -54,14 +54,14 @@ export const HostSetup = ({ onSessionCreated }: HostSetupProps) => {
   };
 
   return (
-    <Card className="p-6 md:p-8 shadow-elegant border-gold/20 animate-fade-in">
+    <Card className="p-6 md:p-8 shadow-card border-teal/20 animate-fade-in bg-gradient-to-br from-cream to-white-smoke">
       <div className="space-y-6">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-float">👑</div>
-          <h2 className="text-2xl md:text-3xl font-semibold mb-2 bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+          <div className="text-6xl mb-4 animate-float">🌿</div>
+          <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 bg-gradient-to-r from-teal to-coral bg-clip-text text-transparent">
             Host Setup
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground font-sans">
             Create a game session and share the code with your guests
           </p>
         </div>
@@ -73,13 +73,13 @@ export const HostSetup = ({ onSessionCreated }: HostSetupProps) => {
               placeholder="Host Code"
               value={hostCode}
               onChange={(e) => setHostCode(e.target.value.toUpperCase())}
-              className="text-lg h-12 border-gold/30 focus:border-gold text-center font-bold tracking-wider"
+              className="text-lg h-12 border-teal/30 focus:border-teal text-center font-bold tracking-wider bg-white-smoke"
               maxLength={6}
             />
             <Button
               onClick={generateHostCode}
               variant="outline"
-              className="border-gold/30 hover:bg-gold/10 h-12 px-6"
+              className="border-teal/30 hover:bg-teal/10 h-12 px-6 text-navy"
             >
               Generate
             </Button>
@@ -88,16 +88,16 @@ export const HostSetup = ({ onSessionCreated }: HostSetupProps) => {
           <Button
             onClick={createSession}
             disabled={isCreating || !hostCode}
-            className="w-full h-12 text-lg bg-gradient-to-r from-gold to-accent hover:opacity-90 transition-opacity"
+            className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral"
             size="lg"
           >
             {isCreating ? "Creating..." : "Create Game Session"}
           </Button>
         </div>
 
-        <div className="bg-gradient-to-br from-champagne/50 to-rose-gold/20 rounded-xl p-4">
-          <h3 className="font-semibold mb-2 text-sm">💡 How it works:</h3>
-          <ul className="text-sm text-muted-foreground space-y-1">
+        <div className="bg-gradient-to-br from-mint-light/30 to-coral/10 rounded-xl p-4 border border-teal/10">
+          <h3 className="font-playfair font-semibold mb-2 text-sm text-navy">💡 How it works:</h3>
+          <ul className="text-sm text-muted-foreground space-y-1 font-sans">
             <li>• Generate a unique host code</li>
             <li>• Share it with your guests</li>
             <li>• Only you can start the game</li>

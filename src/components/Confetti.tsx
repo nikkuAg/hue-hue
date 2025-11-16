@@ -12,10 +12,10 @@ export const Confetti = () => {
 
   useEffect(() => {
     const colors = [
-      "hsl(43, 74%, 49%)",
-      "hsl(340, 55%, 82%)",
-      "hsl(45, 50%, 88%)",
-      "hsl(340, 85%, 65%)",
+      "hsl(12, 82%, 77%)",
+      "hsl(15, 75%, 82%)",
+      "hsl(165, 40%, 75%)",
+      "hsl(0, 0%, 100%)",
     ];
 
     const newPieces = Array.from({ length: 50 }, (_, i) => ({

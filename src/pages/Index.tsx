@@ -6,12 +6,13 @@ import { ScratchCard } from "@/components/ScratchCard";
 import { Confetti } from "@/components/Confetti";
 import { HostSetup } from "@/components/HostSetup";
 import { ParentsImageUpload } from "@/components/ParentsImageUpload";
+import { FloatingPetals } from "@/components/FloatingPetals";
+import { BotanicalDecoration } from "@/components/BotanicalDecoration";
 import { useGameSession } from "@/hooks/useGameSession";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, Users, Crown, Gift, Upload } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import anniversaryPattern from "@/assets/anniversary-pattern.png";
 
 type GameState = "setup" | "join" | "waiting" | "playing" | "result";
 
@@ -293,13 +294,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-champagne to-rose-gold/20 p-4 md:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
+      <FloatingPetals />
+      <BotanicalDecoration />
+      
       {/* Animated background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 text-4xl opacity-20 animate-float">🎊</div>
+      <div className="absolute inset-0 pointer-events-none z-5">
+        <div className="absolute top-20 left-10 text-4xl opacity-20 animate-float">🌸</div>
         <div className="absolute top-40 right-20 text-5xl opacity-20 animate-float" style={{ animationDelay: '1s' }}>✨</div>
-        <div className="absolute bottom-40 left-1/4 text-6xl opacity-20 animate-float" style={{ animationDelay: '2s' }}>💝</div>
-        <div className="absolute bottom-20 right-1/3 text-4xl opacity-20 animate-float" style={{ animationDelay: '1.5s' }}>🎁</div>
+        <div className="absolute bottom-40 left-1/4 text-6xl opacity-20 animate-float" style={{ animationDelay: '2s' }}>🌿</div>
+        <div className="absolute bottom-20 right-1/3 text-4xl opacity-20 animate-float" style={{ animationDelay: '1.5s' }}>💐</div>
       </div>
 
       {showConfetti && <Confetti />}
@@ -307,13 +311,15 @@ const Index = () => {
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <header className="text-center mb-8 md:mb-12">
-          <div className="flex justify-center mb-4">
-            <Sparkles className="w-12 h-12 text-gold animate-pulse" />
+          <div className="flex justify-center mb-6">
+            <div className="text-6xl md:text-7xl font-script text-coral animate-float">
+              Pawan & Prachi
+            </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-gold via-accent to-rose-gold bg-clip-text text-transparent mb-2 md:mb-4">
-            Anniversary Celebration
+          <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">
+            Celebrating 25 Years of Togetherness
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground">
+          <p className="text-lg md:text-xl font-sans text-muted-foreground">
             Lucky Draw Scratch Cards Game
           </p>
         </header>
@@ -333,14 +339,14 @@ const Index = () => {
               </>
             )}
 
-            <Card className="p-6 md:p-8 shadow-elegant border-gold/20">
+            <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
               <div className="space-y-6">
                 <div className="text-center">
-                  <div className="text-6xl mb-4 animate-float">🎉</div>
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-foreground">
+                  <div className="text-6xl mb-4 animate-float">🌸</div>
+                  <h2 className="text-2xl md:text-3xl font-playfair font-semibold mb-2 text-navy">
                     Join Game
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground font-sans">
                     Enter the host code to join the celebration
                   </p>
                 </div>
@@ -351,7 +357,7 @@ const Index = () => {
                     placeholder="Your name"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    className="text-lg h-12 border-gold/30 focus:border-gold"
+                    className="text-lg h-12 border-teal/30 focus:border-teal bg-white-smoke font-sans"
                   />
                   
                   {/* Only show game code input if NOT coming from a shared link */}
@@ -361,13 +367,13 @@ const Index = () => {
                       placeholder="Game Code (e.g., ABC123)"
                       value={sessionCodeInput}
                       onChange={(e) => setSessionCodeInput(e.target.value.toUpperCase())}
-                      className="text-lg h-12 border-gold/30 focus:border-gold text-center font-bold tracking-wider"
+                      className="text-lg h-12 border-teal/30 focus:border-teal text-center font-bold tracking-wider bg-white-smoke"
                       maxLength={6}
                     />
                   )}
                   <Button
                     onClick={handleJoinGame}
-                    className="w-full h-12 text-lg bg-gradient-to-r from-gold to-accent hover:opacity-90 transition-opacity"
+                    className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral"
                     size="lg"
                   >
                     Join Game
