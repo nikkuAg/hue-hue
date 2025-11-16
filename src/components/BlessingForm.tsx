@@ -28,26 +28,28 @@ export const BlessingForm = () => {
 
       setIsSubmitting(true);
 
-      // Check for profanity using AI moderation
-      const { data: moderationData, error: moderationError } = await supabase.functions
-        .invoke('moderate-content', {
-          body: { message: validatedData.message }
-        });
+      // Only check for profanity in production using AI moderation
+      if (import.meta.env.PROD) {
+        const { data: moderationData, error: moderationError } = await supabase.functions
+          .invoke('moderate-content', {
+            body: { message: validatedData.message }
+          });
 
-      if (moderationError) {
-        console.error("Moderation error:", moderationError);
-        toast.error("Unable to verify content. Please try again.");
-        setIsSubmitting(false);
-        return;
-      }
+        if (moderationError) {
+          console.error("Moderation error:", moderationError);
+          toast.error("Unable to verify content. Please try again.");
+          setIsSubmitting(false);
+          return;
+        }
 
-      if (!moderationData?.isAppropriate) {
-        toast.error(
-          moderationData?.reason || 
-          "Your message contains inappropriate content. Please revise and keep it respectful for this family celebration."
-        );
-        setIsSubmitting(false);
-        return;
+        if (!moderationData?.isAppropriate) {
+          toast.error(
+            moderationData?.reason || 
+            "Your message contains inappropriate content. Please revise and keep it respectful for this family celebration."
+          );
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       // If moderation passed, save the blessing
