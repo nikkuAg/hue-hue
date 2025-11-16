@@ -1,13 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import anniversaryPattern from "@/assets/anniversary-pattern.png";
 
 interface ScratchCardProps {
   content: React.ReactNode;
   onComplete?: () => void;
   scratchPercentage?: number;
-  showPattern?: boolean; // To show anniversary pattern instead of metallic coating
+  showPattern?: boolean;
 }
+
+// Anniversary themed graphics - each card gets one random graphic
+const GRAPHICS = [
+  { name: 'Diamond', symbol: '💎', path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+  { name: 'Ring', symbol: '💍', path: 'M12 2c-2 0-4 1-5 3l-2 4c0 3 2 5 7 5s7-2 7-5l-2-4c-1-2-3-3-5-3z' },
+  { name: 'Rose', symbol: '🌹', path: 'M12 2c-3 0-5 2-5 5 0 2 1 4 3 5v8h4v-8c2-1 3-3 3-5 0-3-2-5-5-5z' },
+  { name: 'Heart', symbol: '❤️', path: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
+  { name: 'Champagne', symbol: '🥂', path: 'M6 2l2 8c0 2 1.5 3 4 3s4-1 4-3l2-8H6zm4 13v5h4v-5M8 20h8' },
+  { name: 'Bells', symbol: '🔔', path: 'M12 2v4M12 18v4M8 6c0-2 2-4 4-4s4 2 4 4v8c0 1-1 2-2 2h-4c-1 0-2-1-2-2V6z' },
+];
 
 export const ScratchCard = ({ 
   content, 
@@ -19,6 +28,12 @@ export const ScratchCard = ({
   const [isScratching, setIsScratching] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const lastPointRef = useRef<{ x: number; y: number } | null>(null);
+  
+  // Randomly select one graphic per card instance
+  const selectedGraphic = useMemo(() => 
+    GRAPHICS[Math.floor(Math.random() * GRAPHICS.length)], 
+    []
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,51 +49,62 @@ export const ScratchCard = ({
     ctx.scale(2, 2);
 
     if (showPattern) {
-      // Load and draw the anniversary pattern
-      const img = new Image();
-      img.src = anniversaryPattern;
-      img.onload = () => {
-        // Create a silver background first
-        const silverGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-        silverGradient.addColorStop(0, "hsl(0, 0%, 85%)");
-        silverGradient.addColorStop(0.5, "hsl(0, 0%, 95%)");
-        silverGradient.addColorStop(1, "hsl(0, 0%, 85%)");
-        
-        ctx.fillStyle = silverGradient;
-        ctx.fillRect(0, 0, rect.width, rect.height);
+      // Silver jubilee themed gradient background
+      const silverGradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+      silverGradient.addColorStop(0, "hsl(0, 0%, 88%)");
+      silverGradient.addColorStop(0.5, "hsl(0, 0%, 95%)");
+      silverGradient.addColorStop(1, "hsl(0, 0%, 88%)");
+      
+      ctx.fillStyle = silverGradient;
+      ctx.fillRect(0, 0, rect.width, rect.height);
 
-        // Draw the pattern tiled across the card
-        const patternSize = Math.min(rect.width, rect.height) * 0.8;
-        const x = (rect.width - patternSize) / 2;
-        const y = (rect.height - patternSize) / 2;
-        
-        ctx.globalAlpha = 0.6;
-        ctx.drawImage(img, x, y, patternSize, patternSize);
-        ctx.globalAlpha = 1;
+      // Draw subtle graphic in center using SVG path
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const size = Math.min(rect.width, rect.height) * 0.5;
+      
+      // Create a very subtle graphic - just an outline
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(size / 24, size / 24); // Scale to fit
+      
+      // Subtle gradient for the graphic
+      const graphicGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
+      graphicGradient.addColorStop(0, "hsl(0, 0%, 85%)");
+      graphicGradient.addColorStop(1, "hsl(0, 0%, 92%)");
+      
+      ctx.strokeStyle = graphicGradient;
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = 0.15; // Very subtle
+      
+      // Draw the selected graphic path
+      const path = new Path2D(selectedGraphic.path);
+      ctx.stroke(path);
+      
+      ctx.restore();
 
-        // Add decorative border
-        ctx.strokeStyle = "hsl(43, 74%, 58%)"; // Gold
-        ctx.lineWidth = 3;
-        ctx.strokeRect(4, 4, rect.width - 8, rect.height - 8);
+      // Decorative golden border
+      ctx.strokeStyle = "hsl(43, 74%, 58%)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(4, 4, rect.width - 8, rect.height - 8);
 
-        // Add text
-        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
-        
-        ctx.fillStyle = "hsl(280, 40%, 35%)"; // Deep maroon
-        ctx.font = "bold 24px serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, 20);
-        
-        ctx.font = "16px sans-serif";
-        ctx.fillText("Reveal Your Prize", rect.width / 2, rect.height - 40);
-        
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-      };
+      // Add text with theme colors
+      ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+      ctx.shadowBlur = 3;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      
+      ctx.fillStyle = "hsl(280, 40%, 45%)"; // Royal purple
+      ctx.font = "bold 24px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText("✨ Scratch Here! ✨", rect.width / 2, 20);
+      
+      ctx.font = "16px sans-serif";
+      ctx.fillText("Reveal Your Prize", rect.width / 2, rect.height - 40);
+      
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
     } else {
       // Original metallic gradient coating
       const centerX = rect.width / 2;
@@ -95,7 +121,7 @@ export const ScratchCard = ({
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, rect.width, rect.height);
     }
-  }, [showPattern]);
+  }, [showPattern, selectedGraphic]);
 
   const scratch = (x: number, y: number) => {
     const canvas = canvasRef.current;
