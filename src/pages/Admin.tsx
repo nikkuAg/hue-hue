@@ -343,14 +343,16 @@ export default function Admin() {
                     Start Game
                   </Button>
                 )}
-                <Button
-                  onClick={handleEndGame}
-                  variant="outline"
-                  className="flex-1 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                >
-                  <Square className="w-4 h-4 mr-2" />
-                  End Game
-                </Button>
+                {(session?.status === "waiting" || session?.status === "playing") && (
+                  <Button
+                    onClick={handleEndGame}
+                    variant="outline"
+                    className="flex-1 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    <Square className="w-4 h-4 mr-2" />
+                    End Game
+                  </Button>
+                )}
               </div>
             </div>
           )}
