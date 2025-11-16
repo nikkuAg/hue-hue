@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Trash2, LogOut, Shield, Play, Square, Copy, Users } from "lucide-react";
+import { Trash2, LogOut, Shield, Play, Square, Copy, Users, Crown, Gift } from "lucide-react";
 import { useGameSession } from "@/hooks/useGameSession";
 import {
   AlertDialog,
@@ -349,6 +349,25 @@ export default function Admin() {
                   </div>
                 </div>
               )}
+
+              {/* Winners Section */}
+              {players && players.filter(p => p.is_winner).length > 0 && (
+                <div className="p-4 bg-gradient-to-br from-gold/10 to-accent/10 rounded-lg border-2 border-gold/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Crown className="w-5 h-5 text-gold" />
+                    <p className="text-sm font-semibold text-gold">Winners 🎉</p>
+                  </div>
+                  <div className="space-y-2">
+                    {players.filter(p => p.is_winner).map((player) => (
+                      <div key={player.id} className="flex items-center gap-2 p-2 bg-white rounded">
+                        <Gift className="w-4 h-4 text-coral" />
+                        <p className="text-navy font-semibold">{player.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
 
               <div className="flex gap-3">
                 {session?.status === "waiting" && (
