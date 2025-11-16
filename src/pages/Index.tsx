@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { ScratchCard } from "@/components/ScratchCard";
 import { Confetti } from "@/components/Confetti";
 import { HostSetup } from "@/components/HostSetup";
-
+import { CouplePhotoUpload } from "@/components/CouplePhotoUpload";
+import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
 import { useGameSession } from "@/hooks/useGameSession";
@@ -248,6 +249,7 @@ const Index = () => {
     setHostCode(null);
   };
   return <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
+      <CouplePhotoBackground />
       <FloatingPetals />
       <BotanicalDecoration />
       
@@ -284,6 +286,8 @@ const Index = () => {
         {gameState === "setup" && <div className="space-y-4 animate-fade-in">
             {!urlSessionCode && <>
                 <HostSetup onSessionCreated={handleHostSession} />
+                
+                <CouplePhotoUpload />
                 
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">or</p>
