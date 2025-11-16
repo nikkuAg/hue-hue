@@ -144,14 +144,14 @@ export default function WordCloud() {
 
         {/* Thought Bubble Toast for Latest Blessing */}
         {latestBlessing && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-            <div className="relative bg-white rounded-2xl shadow-elegant p-6 max-w-md border-2 border-coral/30">
-              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8">
+          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 max-w-md w-full px-4 animate-fade-in" style={{ zIndex: 9999 }}>
+            <div className="relative bg-white rounded-2xl shadow-2xl p-6 border-2 border-coral/30">
+              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
                 <div className="w-6 h-6 bg-white border-l-2 border-b-2 border-coral/30 transform rotate-45"></div>
               </div>
               <div className="flex items-start gap-3">
                 <Heart className="w-6 h-6 text-coral flex-shrink-0 mt-1 animate-float" />
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-semibold text-navy mb-1">New Blessing Received! 🌸</p>
                   <p className="text-sm text-muted-foreground line-clamp-3">{latestBlessing}</p>
                 </div>
