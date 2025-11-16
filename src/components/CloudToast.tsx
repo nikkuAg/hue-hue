@@ -23,16 +23,17 @@ export const CloudToast = ({ message, onRemove, delay }: CloudToastProps) => {
 
   return (
     <div
-      className="fixed animate-fade-in pointer-events-none"
+      className="fixed pointer-events-none animate-float-up"
       style={{
         top: `${position.top}%`,
         left: `${position.left}%`,
         zIndex: 100,
         animationDelay: `${delay}ms`,
+        animationDuration: `${5000 + delay}ms`,
       }}
     >
       {/* Cloud shape */}
-      <div className="relative">
+      <div className="relative animate-bounce-gentle">
         {/* Cloud body using rounded divs to create cloud shape */}
         <div className="relative bg-white rounded-full shadow-2xl">
           {/* Main cloud circles */}
