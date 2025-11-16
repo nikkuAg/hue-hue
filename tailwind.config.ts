@@ -112,6 +112,14 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.9)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "float-up": {
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": { transform: "translateY(-100px)", opacity: "0" },
+        },
+        "bounce-gentle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -122,6 +130,8 @@ export default {
         "scratch-reveal": "scratch-reveal 0.5s ease-out",
         "petal-fall": "petal-fall 8s linear infinite",
         "float-gentle": "float-gentle 4s ease-in-out infinite",
+        "float-up": "float-up 5s ease-out forwards",
+        "bounce-gentle": "bounce-gentle 2s ease-in-out infinite",
       },
     },
   },
