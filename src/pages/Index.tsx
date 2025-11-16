@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { ScratchCard } from "@/components/ScratchCard";
 import { Confetti } from "@/components/Confetti";
 import { HostSetup } from "@/components/HostSetup";
-import { CouplePhotoUpload } from "@/components/CouplePhotoUpload";
 import { CouplePhotoBackground } from "@/components/CouplePhotoBackground";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { BotanicalDecoration } from "@/components/BotanicalDecoration";
@@ -286,8 +285,6 @@ const Index = () => {
         {gameState === "setup" && <div className="space-y-4 animate-fade-in">
             {!urlSessionCode && <>
                 <HostSetup onSessionCreated={handleHostSession} />
-                
-                <CouplePhotoUpload />
                 
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">or</p>
