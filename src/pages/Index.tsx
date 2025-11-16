@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -11,10 +12,11 @@ import { BotanicalDecoration } from "@/components/BotanicalDecoration";
 import { useGameSession } from "@/hooks/useGameSession";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Sparkles, Users, Crown, Gift, Upload } from "lucide-react";
+import { Sparkles, Users, Crown, Gift, Upload, Heart } from "lucide-react";
 import { Label } from "@/components/ui/label";
 type GameState = "setup" | "join" | "waiting" | "playing" | "result";
 const Index = () => {
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>("setup");
   const [playerName, setPlayerName] = useState("");
   const [sessionCodeInput, setSessionCodeInput] = useState(""); // For manual code entry
@@ -279,6 +281,14 @@ const Index = () => {
           <h1 className="text-3xl md:text-5xl font-playfair font-semibold text-navy mb-3">
             Celebrating 25 Years of Togetherness
           </h1>
+          <Button
+            onClick={() => navigate("/blessings")}
+            variant="outline"
+            className="border-coral text-coral hover:bg-coral hover:text-white transition-colors"
+          >
+            <Heart className="mr-2 h-4 w-4" />
+            Share Your Blessings
+          </Button>
         </header>
 
         {/* Setup State */}
