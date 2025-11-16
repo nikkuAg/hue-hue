@@ -29,6 +29,7 @@ export default {
         "mint-dark": "hsl(var(--mint-dark))",
         teal: "hsl(var(--teal))",
         coral: "hsl(var(--coral))",
+        "coral-dark": "hsl(var(--coral-dark))",
         peach: "hsl(var(--peach))",
         cream: "hsl(var(--cream))",
         sage: "hsl(var(--sage))",
