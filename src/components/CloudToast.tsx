@@ -11,7 +11,7 @@ interface CloudToastProps {
 export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps) => {
   const [side] = useState(() => (Math.random() > 0.5 ? 'left' : 'right'));
   const [position] = useState(() => ({
-    top: Math.random() * 70 + 10, // Random position between 10% and 80%
+    top: Math.random() * 50 + 5, // Reduced range: 5% to 55% to prevent bottom overflow
     horizontal: Math.random() * 2 + 0.5, // Random offset 0.5rem to 2.5rem from edge
     floatDistance: Math.random() * 20 + 15, // Random float distance 15-35px
     floatDuration: Math.random() * 3 + 8, // Random duration 8-11 seconds
@@ -27,7 +27,7 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
 
   return (
     <div
-      className="fixed pointer-events-none z-50 animate-cloud-float-gentle"
+      className="fixed pointer-events-none z-50 animate-cloud-float-gentle max-h-[90vh] overflow-visible"
       style={{
         top: `${position.top}%`,
         [side]: `${position.horizontal}rem`,
