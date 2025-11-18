@@ -36,28 +36,24 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
         '--float-distance': `${position.floatDistance}px`,
       } as React.CSSProperties & { '--float-distance': string }}
     >
-      {/* Cloud shape */}
+      {/* Thought bubble shape */}
       <div className="relative">
-        {/* Cloud body using rounded divs to create cloud shape */}
-        <div className="relative bg-white/95 backdrop-blur-sm rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
-          {/* Main cloud circles - wider cloud */}
-          <div className="flex items-end">
-            <div className="w-28 h-28 bg-white/95 rounded-full border-2 border-coral/40 shadow-lg"></div>
-            <div className="w-32 h-32 bg-white/95 rounded-full -ml-9 border-2 border-coral/40 shadow-lg"></div>
-            <div className="w-28 h-28 bg-white/95 rounded-full -ml-9 border-2 border-coral/40 shadow-lg"></div>
-          </div>
-          {/* Cloud base */}
-          <div className="absolute -bottom-5 left-4 right-4 h-12 bg-white/95 border-2 border-t-0 border-coral/40 rounded-b-full shadow-lg"></div>
-          
+        {/* Main thought bubble */}
+        <div className="relative bg-white border-2 border-coral/40 rounded-3xl shadow-elegant px-8 py-6 min-w-[300px] max-w-[320px]">
           {/* Content */}
-          <div className="absolute inset-0 flex items-center justify-center p-9">
-            <div className="text-center max-w-[280px]">
-              <Heart className="w-6 h-6 text-coral mx-auto mb-2.5 animate-float" />
-              <p className="text-base text-navy font-sans line-clamp-4 leading-relaxed font-medium">
-                {message}
-              </p>
-            </div>
+          <div className="text-center">
+            <Heart className="w-6 h-6 text-coral mx-auto mb-3 animate-float" />
+            <p className="text-base text-navy font-sans line-clamp-4 leading-relaxed font-medium">
+              {message}
+            </p>
           </div>
+        </div>
+        
+        {/* Thought bubble tail - small circles */}
+        <div className="absolute -bottom-6 left-8 flex flex-col gap-1.5">
+          <div className="w-4 h-4 bg-white border-2 border-coral/40 rounded-full shadow-lg"></div>
+          <div className="w-2.5 h-2.5 bg-white border-2 border-coral/40 rounded-full shadow-lg ml-2"></div>
+          <div className="w-1.5 h-1.5 bg-white border-2 border-coral/40 rounded-full shadow-md ml-3"></div>
         </div>
       </div>
     </div>
