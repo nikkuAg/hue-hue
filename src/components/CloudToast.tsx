@@ -127,11 +127,11 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
           </>
         )}
 
-        {/* Shape 4: Heart-shaped bubble */}
+        {/* Shape 4: Wavy bubble */}
         {bubbleShape === 4 && (
           <>
             <div className="relative bg-white border-2 border-coral/40 shadow-elegant px-8 py-6 min-w-[240px] max-w-[360px] w-auto"
-                 style={{ borderRadius: '50% 50% 0 0 / 60% 60% 0 0', clipPath: 'polygon(50% 100%, 0% 40%, 0% 20%, 20% 0%, 40% 0%, 50% 10%, 60% 0%, 80% 0%, 100% 20%, 100% 40%)' }}>
+                 style={{ borderRadius: '40% 60% 50% 50% / 50% 50% 60% 40%' }}>
               <div className="text-center">
                 <Heart className="w-6 h-6 text-coral mx-auto mb-3 animate-float" />
                 <p className="text-base text-navy font-sans leading-relaxed font-medium break-words" style={{ 
@@ -142,9 +142,9 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
                 }}>{message}</p>
               </div>
             </div>
-            <div className={`absolute -bottom-5 ${tailSide === 'left' ? 'left-1/2' : 'right-1/2'} flex flex-col gap-1`}>
-              <div className="w-3 h-3 bg-white border-2 border-coral/40 rounded-full shadow-lg"></div>
-              <div className="w-2 h-2 bg-white border-2 border-coral/40 rounded-full shadow-lg ml-1"></div>
+            <div className={`absolute -bottom-5 ${tailSide === 'left' ? 'left-10' : 'right-10'} flex flex-col gap-1`}>
+              <div className="w-3.5 h-3.5 bg-white border-2 border-coral/40 rounded-full shadow-lg"></div>
+              <div className={`w-2 h-2 bg-white border-2 border-coral/40 rounded-full shadow-lg ${tailSide === 'left' ? 'ml-2' : 'mr-2'}`}></div>
             </div>
           </>
         )}
