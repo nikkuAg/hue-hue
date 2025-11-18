@@ -208,7 +208,7 @@ export const ScratchCard = ({
   };
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-card border-2 border-mint-dark/30 bg-card">
       <div className={cn(
         "absolute inset-0 flex items-center justify-center",
         isComplete && "animate-scratch-reveal"

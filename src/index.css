@@ -12,10 +12,10 @@ All colors MUST be HSL.
     --background: 66 44% 91%; /* Light cream #f0f2d2 */
     --foreground: 160 15% 25%; /* Dark sage for text */
 
-    --card: 66 50% 95%; /* Lighter cream #f7f8ea */
+    --card: 0 0% 100%; /* Pure white for cards */
     --card-foreground: 160 15% 25%;
 
-    --popover: 66 50% 95%;
+    --popover: 0 0% 100%;
     --popover-foreground: 160 15% 25%;
 
     /* Teal/sage as primary */
@@ -37,7 +37,7 @@ All colors MUST be HSL.
     --destructive-foreground: 66 50% 95%;
 
     --border: 165 25% 70%;
-    --input: 66 50% 97%;
+    --input: 0 0% 100%;
     --ring: 165 31% 49%;
 
     --radius: 1.2rem;
