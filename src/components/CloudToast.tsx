@@ -10,6 +10,7 @@ interface CloudToastProps {
 
 export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps) => {
   const [side] = useState(() => (Math.random() > 0.5 ? 'left' : 'right'));
+  const [tailSide] = useState(() => (Math.random() > 0.5 ? 'left' : 'right'));
   const [position] = useState(() => ({
     top: Math.random() * 50 + 5, // Reduced range: 5% to 55% to prevent bottom overflow
     horizontal: Math.random() * 2 + 0.5, // Random offset 0.5rem to 2.5rem from edge
@@ -55,10 +56,10 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
         </div>
         
         {/* Thought bubble tail - small circles */}
-        <div className="absolute -bottom-6 left-8 flex flex-col gap-1.5">
+        <div className={`absolute -bottom-6 ${tailSide === 'left' ? 'left-8' : 'right-8'} flex flex-col gap-1.5`}>
           <div className="w-4 h-4 bg-white border-2 border-coral/40 rounded-full shadow-lg"></div>
-          <div className="w-2.5 h-2.5 bg-white border-2 border-coral/40 rounded-full shadow-lg ml-2"></div>
-          <div className="w-1.5 h-1.5 bg-white border-2 border-coral/40 rounded-full shadow-md ml-3"></div>
+          <div className={`w-2.5 h-2.5 bg-white border-2 border-coral/40 rounded-full shadow-lg ${tailSide === 'left' ? 'ml-2' : 'mr-2'}`}></div>
+          <div className={`w-1.5 h-1.5 bg-white border-2 border-coral/40 rounded-full shadow-md ${tailSide === 'left' ? 'ml-3' : 'mr-3'}`}></div>
         </div>
       </div>
     </div>
