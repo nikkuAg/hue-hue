@@ -298,7 +298,7 @@ const Index = () => {
 
          {/* Setup State - Player Join Only */}
         {gameState === "setup" && <div className="space-y-4 animate-fade-in">
-            <Card className="p-6 md:p-8 shadow-card border-teal/20 bg-gradient-to-br from-cream to-white-smoke">
+            <Card className="p-6 md:p-8 shadow-elegant border-2 border-teal/40 bg-white">
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-float">🌸</div>
@@ -311,10 +311,10 @@ const Index = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <Input type="text" placeholder="Your name" value={playerName} onChange={e => setPlayerName(e.target.value)} className="text-lg h-12 border-teal/30 focus:border-teal bg-white-smoke font-sans" />
+                  <Input type="text" placeholder="Your name" value={playerName} onChange={e => setPlayerName(e.target.value)} className="text-lg h-12 border-2 border-teal/40 focus:border-teal bg-white font-sans" />
                   
                   {/* Only show game code input if NOT coming from a shared link */}
-                  {!urlSessionCode && <Input type="text" placeholder="Game Code (e.g., ABC123)" value={sessionCodeInput} onChange={e => setSessionCodeInput(e.target.value.toUpperCase())} className="text-lg h-12 border-teal/30 focus:border-teal text-center font-bold tracking-wider bg-white-smoke" maxLength={6} />}
+                  {!urlSessionCode && <Input type="text" placeholder="Game Code (e.g., ABC123)" value={sessionCodeInput} onChange={e => setSessionCodeInput(e.target.value.toUpperCase())} className="text-lg h-12 border-2 border-teal/40 focus:border-teal text-center font-bold tracking-wider bg-white" maxLength={6} />}
                   <Button 
                     onClick={handleJoinGame} 
                     disabled={isJoining}
