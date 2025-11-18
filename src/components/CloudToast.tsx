@@ -37,7 +37,7 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
       } as React.CSSProperties & { '--float-distance': string }}
     >
       {/* Thought bubble shape */}
-      <div className="relative">
+      <div className="relative animate-scale-in">
         {/* Main thought bubble */}
         <div className="relative bg-white border-2 border-coral/40 rounded-3xl shadow-elegant px-8 py-6 min-w-[300px] max-w-[320px]">
           {/* Content */}
