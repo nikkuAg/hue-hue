@@ -40,20 +40,20 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
       <div className="relative">
         {/* Cloud body using rounded divs to create cloud shape */}
         <div className="relative bg-white/95 backdrop-blur-sm rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
-          {/* Main cloud circles */}
+          {/* Main cloud circles - wider cloud */}
           <div className="flex items-end">
-            <div className="w-20 h-20 bg-white/95 rounded-full border-2 border-coral/30 shadow-lg"></div>
-            <div className="w-24 h-24 bg-white/95 rounded-full -ml-7 border-2 border-coral/30 shadow-lg"></div>
-            <div className="w-20 h-20 bg-white/95 rounded-full -ml-7 border-2 border-coral/30 shadow-lg"></div>
+            <div className="w-28 h-28 bg-white/95 rounded-full border-2 border-coral/40 shadow-lg"></div>
+            <div className="w-32 h-32 bg-white/95 rounded-full -ml-9 border-2 border-coral/40 shadow-lg"></div>
+            <div className="w-28 h-28 bg-white/95 rounded-full -ml-9 border-2 border-coral/40 shadow-lg"></div>
           </div>
           {/* Cloud base */}
-          <div className="absolute -bottom-4 left-3 right-3 h-10 bg-white/95 border-2 border-t-0 border-coral/30 rounded-b-full shadow-lg"></div>
+          <div className="absolute -bottom-5 left-4 right-4 h-12 bg-white/95 border-2 border-t-0 border-coral/40 rounded-b-full shadow-lg"></div>
           
           {/* Content */}
-          <div className="absolute inset-0 flex items-center justify-center p-7">
-            <div className="text-center max-w-[220px]">
-              <Heart className="w-5 h-5 text-coral mx-auto mb-2 animate-float" />
-              <p className="text-[13px] text-navy font-sans line-clamp-3 leading-snug font-medium">
+          <div className="absolute inset-0 flex items-center justify-center p-9">
+            <div className="text-center max-w-[280px]">
+              <Heart className="w-6 h-6 text-coral mx-auto mb-2.5 animate-float" />
+              <p className="text-base text-navy font-sans line-clamp-4 leading-relaxed font-medium">
                 {message}
               </p>
             </div>
