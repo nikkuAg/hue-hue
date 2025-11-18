@@ -9,13 +9,13 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Poster Color Palette */
-    --background: 160 15% 38%; /* Dark sage #537167 */
-    --foreground: 66 50% 95%; /* Light cream #f7f8ea */
+    --background: 66 44% 91%; /* Light cream #f0f2d2 */
+    --foreground: 160 15% 25%; /* Dark sage for text */
 
-    --card: 66 44% 91%; /* Cream #f0f2d2 */
-    --card-foreground: 160 15% 25%; /* Darker sage */
+    --card: 66 50% 95%; /* Lighter cream #f7f8ea */
+    --card-foreground: 160 15% 25%;
 
-    --popover: 66 44% 91%;
+    --popover: 66 50% 95%;
     --popover-foreground: 160 15% 25%;
 
     /* Teal/sage as primary */
@@ -26,8 +26,8 @@ All colors MUST be HSL.
     --secondary: 165 35% 72%; /* #9cd0c3 */
     --secondary-foreground: 160 15% 25%;
 
-    --muted: 165 20% 55%;
-    --muted-foreground: 66 44% 85%;
+    --muted: 165 20% 80%;
+    --muted-foreground: 160 15% 35%;
 
     /* Light mint for accent */
     --accent: 165 35% 72%;
@@ -36,8 +36,8 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 66 50% 95%;
 
-    --border: 165 25% 60%;
-    --input: 66 44% 88%;
+    --border: 165 25% 70%;
+    --input: 66 50% 97%;
     --ring: 165 31% 49%;
 
     --radius: 1.2rem;

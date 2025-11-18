@@ -126,7 +126,7 @@ export default function WordCloud() {
   }, [blessings]); // Recalculate whenever blessings change
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-mint-light to-coral/10 p-4 md:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-cream p-4 md:p-8 relative overflow-hidden">
       <CouplePhotoBackground />
       <FloatingPetals />
       <BotanicalDecoration />
