@@ -39,11 +39,16 @@ export const CloudToast = ({ message, onRemove, delay, index }: CloudToastProps)
       {/* Thought bubble shape */}
       <div className="relative animate-scale-in">
         {/* Main thought bubble */}
-        <div className="relative bg-white border-2 border-coral/40 rounded-3xl shadow-elegant px-8 py-6 min-w-[300px] max-w-[320px]">
+        <div className="relative bg-white border-2 border-coral/40 rounded-3xl shadow-elegant px-8 py-6 min-w-[240px] max-w-[360px] w-auto">
           {/* Content */}
           <div className="text-center">
             <Heart className="w-6 h-6 text-coral mx-auto mb-3 animate-float" />
-            <p className="text-base text-navy font-sans line-clamp-4 leading-relaxed font-medium">
+            <p className="text-base text-navy font-sans leading-relaxed font-medium break-words" style={{ 
+              display: '-webkit-box',
+              WebkitLineClamp: message.length > 100 ? 5 : message.length > 50 ? 4 : 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}>
               {message}
             </p>
           </div>
