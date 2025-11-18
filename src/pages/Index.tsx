@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { Sparkles, Users, Crown, Gift, Upload, Heart } from "lucide-react";
 import { Label } from "@/components/ui/label";
 type GameState = "setup" | "join" | "waiting" | "playing" | "result";
-
 const Index = () => {
   const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>("setup");
@@ -52,7 +51,7 @@ const Index = () => {
   // Watch for session status changes and fetch winner_type
   useEffect(() => {
     if (!session) return;
-    
+
     // Handle game ended
     if (session.status === "ended") {
       toast.info("This game has ended");
@@ -63,7 +62,7 @@ const Index = () => {
       setCurrentPlayerId(null);
       return;
     }
-    
+
     // Handle game started
     if (session.status === "playing" && gameState === "waiting") {
       // Fetch winner status before showing scratch card
@@ -84,7 +83,7 @@ const Index = () => {
   }, [session, gameState, currentPlayerId]);
   const handleJoinGame = async () => {
     if (isJoining) return; // Prevent multiple clicks
-    
+
     if (!playerName.trim()) {
       toast.error("Please enter your name");
       return;
@@ -96,7 +95,6 @@ const Index = () => {
       toast.error("Please enter the game code");
       return;
     }
-    
     setIsJoining(true);
     try {
       // Find session by code
@@ -122,13 +120,10 @@ const Index = () => {
       }
 
       // Check if this device already joined this session
-      const { data: existingPlayer, error: checkError } = await supabase
-        .from("players")
-        .select("*")
-        .eq("session_id", sessionData.id)
-        .eq("device_id", deviceId)
-        .maybeSingle();
-
+      const {
+        data: existingPlayer,
+        error: checkError
+      } = await supabase.from("players").select("*").eq("session_id", sessionData.id).eq("device_id", deviceId).maybeSingle();
       if (existingPlayer) {
         // Player already joined this session, restore their data
         setCurrentPlayerId(existingPlayer.id);
@@ -278,19 +273,11 @@ const Index = () => {
             Celebrating 25 Years of Togetherness
           </h1>
           <div className="flex justify-center gap-4">
-            <Button
-              onClick={() => navigate("/blessings")}
-              variant="outline"
-              className="border-coral text-coral hover:bg-coral hover:text-white transition-colors"
-            >
+            <Button onClick={() => navigate("/blessings")} variant="outline" className="border-coral hover:bg-coral transition-colors text-[#b62d20]">
               <Heart className="mr-2 h-4 w-4" />
               Share Blessings
             </Button>
-            <Button
-              onClick={() => navigate("/blessings/cloud")}
-              variant="outline"
-              className="border-teal text-teal hover:bg-teal hover:text-white transition-colors"
-            >
+            <Button onClick={() => navigate("/blessings/cloud")} variant="outline" className="border-teal text-teal hover:bg-teal hover:text-white transition-colors">
               View Word Cloud
             </Button>
           </div>
@@ -315,12 +302,7 @@ const Index = () => {
                   
                   {/* Only show game code input if NOT coming from a shared link */}
                   {!urlSessionCode && <Input type="text" placeholder="Game Code (e.g., ABC123)" value={sessionCodeInput} onChange={e => setSessionCodeInput(e.target.value.toUpperCase())} className="text-lg h-12 border-2 border-teal/40 focus:border-teal text-center font-bold tracking-wider bg-white" maxLength={6} />}
-                  <Button 
-                    onClick={handleJoinGame} 
-                    disabled={isJoining}
-                    className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral disabled:opacity-50 disabled:cursor-not-allowed" 
-                    size="lg"
-                  >
+                  <Button onClick={handleJoinGame} disabled={isJoining} className="w-full h-12 text-lg font-sans bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90 transition-opacity shadow-coral disabled:opacity-50 disabled:cursor-not-allowed" size="lg">
                     {isJoining ? "Joining..." : "Join Game"}
                   </Button>
                 </div>
@@ -376,8 +358,7 @@ const Index = () => {
 
             <div className="flex justify-center px-4">
               <div className="w-full max-w-md h-[400px] md:h-[500px]">
-                <ScratchCard onComplete={handleScratchComplete} content={isWinner ? (
-                  <div className="text-center space-y-4 bg-mint-light/30 p-8 rounded-lg h-full flex flex-col items-center justify-center">
+                <ScratchCard onComplete={handleScratchComplete} content={isWinner ? <div className="text-center space-y-4 bg-mint-light/30 p-8 rounded-lg h-full flex flex-col items-center justify-center">
                     <div className="text-7xl md:text-9xl animate-bounce">🎁</div>
                     <div className="space-y-2">
                       <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
@@ -387,9 +368,7 @@ const Index = () => {
                         You're a Winner! 🎉
                       </p>
                     </div>
-                  </div>
-                ) : (
-                  <div className="text-center space-y-4">
+                  </div> : <div className="text-center space-y-4">
                     <div className="text-5xl md:text-7xl animate-float">💝</div>
                     <div className="space-y-2">
                       <h3 className="text-xl md:text-2xl font-semibold text-navy">
@@ -399,8 +378,7 @@ const Index = () => {
                         We appreciate your participation
                       </p>
                     </div>
-                  </div>
-                )} scratchPercentage={50} showPattern={true} />
+                  </div>} scratchPercentage={50} showPattern={true} />
               </div>
             </div>
           </div>}
@@ -410,7 +388,7 @@ const Index = () => {
             <div className="text-center space-y-6">
               {isWinner ? <>
                   <div className="text-7xl md:text-9xl animate-float">🎁</div>
-                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text md:text-[000016] text-[#b62d20]">
                     CONGRATULATIONS! 🎉
                   </h2>
                   <p className="text-lg md:text-xl text-foreground">
