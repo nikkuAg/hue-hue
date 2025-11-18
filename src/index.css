@@ -8,62 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Botanical Anniversary Theme - Inspired by the poster */
-    --background: 165 35% 78%;
-    --foreground: 210 29% 24%;
+    /* Poster Color Palette */
+    --background: 160 15% 38%; /* Dark sage #537167 */
+    --foreground: 66 50% 95%; /* Light cream #f7f8ea */
 
-    --card: 45 35% 93%;
-    --card-foreground: 210 29% 24%;
+    --card: 66 44% 91%; /* Cream #f0f2d2 */
+    --card-foreground: 160 15% 25%; /* Darker sage */
 
-    --popover: 45 35% 93%;
-    --popover-foreground: 210 29% 24%;
+    --popover: 66 44% 91%;
+    --popover-foreground: 160 15% 25%;
 
-    /* Soft teal/mint as primary */
-    --primary: 165 40% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Teal/sage as primary */
+    --primary: 165 31% 49%; /* #56a390 */
+    --primary-foreground: 66 50% 95%;
 
-    /* Sage green for secondary */
-    --secondary: 155 20% 50%;
-    --secondary-foreground: 0 0% 100%;
+    /* Light mint for secondary */
+    --secondary: 165 35% 72%; /* #9cd0c3 */
+    --secondary-foreground: 160 15% 25%;
 
-    --muted: 165 20% 85%;
-    --muted-foreground: 210 15% 45%;
+    --muted: 165 20% 55%;
+    --muted-foreground: 66 44% 85%;
 
-    /* Peach/coral for accent */
-    --accent: 12 82% 77%;
-    --accent-foreground: 210 29% 24%;
+    /* Light mint for accent */
+    --accent: 165 35% 72%;
+    --accent-foreground: 160 15% 25%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 66 50% 95%;
 
-    --border: 165 25% 80%;
-    --input: 45 30% 95%;
-    --ring: 165 40% 60%;
+    --border: 165 25% 60%;
+    --input: 66 44% 88%;
+    --ring: 165 31% 49%;
 
     --radius: 1.2rem;
     
-    /* Botanical Color Palette */
-    --mint: 165 40% 75%;
-    --mint-light: 165 35% 85%;
-    --mint-dark: 165 40% 60%;
-    --teal: 165 45% 55%;
+    /* Poster Color Palette */
+    --mint: 165 35% 72%; /* #9cd0c3 */
+    --mint-light: 165 35% 80%;
+    --mint-dark: 165 31% 49%; /* #56a390 */
+    --teal: 165 31% 49%; /* #56a390 */
+    --sage-dark: 160 15% 38%; /* #537167 */
+    --sage: 160 15% 45%;
+    --cream: 66 44% 91%; /* #f0f2d2 */
+    --cream-light: 66 50% 95%; /* #f7f8ea */
     --coral: 12 82% 77%;
     --coral-dark: 5 70% 42%;
-    --peach: 15 75% 82%;
-    --cream: 45 35% 93%;
-    --sage: 155 20% 50%;
-    --navy: 210 29% 24%;
-    --white-smoke: 0 0% 98%;
+    --navy: 160 15% 25%;
+    --white-smoke: 66 50% 97%;
     
-    /* Botanical Gradients */
-    --gradient-botanical: linear-gradient(135deg, hsl(165 35% 92%), hsl(165 40% 85%));
+    /* Poster Gradients */
+    --gradient-botanical: linear-gradient(135deg, hsl(165 35% 72%), hsl(165 31% 49%));
     --gradient-coral: linear-gradient(135deg, hsl(12 82% 77%), hsl(15 75% 82%));
-    --gradient-card: linear-gradient(180deg, hsl(45 35% 95%), hsl(45 35% 93%));
-    --gradient-mint: linear-gradient(135deg, hsl(165 40% 75%), hsl(165 35% 85%));
+    --gradient-card: linear-gradient(180deg, hsl(66 50% 95%), hsl(66 44% 91%));
+    --gradient-mint: linear-gradient(135deg, hsl(165 35% 72%), hsl(165 35% 80%));
     
     /* Soft Shadows */
-    --shadow-elegant: 0 8px 32px -8px hsl(165 40% 60% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(165 40% 60% / 0.15);
+    --shadow-elegant: 0 8px 32px -8px hsl(165 31% 49% / 0.25);
+    --shadow-card: 0 4px 20px -4px hsl(165 31% 49% / 0.2);
     --shadow-coral: 0 4px 20px -4px hsl(12 82% 77% / 0.2);
     
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -86,34 +87,34 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with botanical theme */
-    --background: 165 30% 12%;
-    --foreground: 0 0% 95%;
+    /* Dark mode with poster palette */
+    --background: 160 15% 18%;
+    --foreground: 66 50% 95%;
 
-    --card: 165 25% 18%;
-    --card-foreground: 0 0% 95%;
+    --card: 160 15% 25%;
+    --card-foreground: 66 50% 95%;
 
-    --popover: 165 25% 18%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 160 15% 25%;
+    --popover-foreground: 66 50% 95%;
 
-    --primary: 165 40% 65%;
-    --primary-foreground: 210 29% 24%;
+    --primary: 165 31% 55%;
+    --primary-foreground: 160 15% 18%;
 
-    --secondary: 155 25% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 165 35% 60%;
+    --secondary-foreground: 160 15% 18%;
 
-    --muted: 165 20% 22%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 160 15% 30%;
+    --muted-foreground: 66 44% 80%;
 
-    --accent: 12 75% 70%;
-    --accent-foreground: 210 29% 24%;
+    --accent: 165 35% 65%;
+    --accent-foreground: 160 15% 18%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 66 50% 95%;
 
-    --border: 280 20% 25%;
-    --input: 280 20% 18%;
-    --ring: 0 0% 75%;
+    --border: 160 15% 35%;
+    --input: 160 15% 22%;
+    --ring: 165 31% 55%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
