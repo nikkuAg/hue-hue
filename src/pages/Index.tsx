@@ -377,7 +377,7 @@ const Index = () => {
             <div className="flex justify-center px-4">
               <div className="w-full max-w-md h-[400px] md:h-[500px]">
                 <ScratchCard onComplete={handleScratchComplete} content={isWinner ? (
-                  <div className="text-center space-y-4 bg-gradient-to-br from-gold/20 to-accent/20 p-8 rounded-lg h-full flex flex-col items-center justify-center">
+                  <div className="text-center space-y-4 bg-mint-light/30 p-8 rounded-lg h-full flex flex-col items-center justify-center">
                     <div className="text-7xl md:text-9xl animate-bounce">🎁</div>
                     <div className="space-y-2">
                       <h3 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gold to-accent bg-clip-text text-transparent">
