@@ -12,7 +12,7 @@ export const CouplePhotoBackground = () => {
           backgroundRepeat: "no-repeat",
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-mint-light/90 to-coral/5" />
+      <div className="absolute inset-0 bg-cream/60" />
     </div>
   );
 };
