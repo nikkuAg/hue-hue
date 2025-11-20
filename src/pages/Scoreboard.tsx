@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Zap } from "lucide-react";
 import { FloatingPetals } from "@/components/FloatingPetals";
 import { Confetti } from "@/components/Confetti";
+import { playScoreSound, playCelebrationSound, playWinnerSound } from "@/utils/soundEffects";
 
 interface ScoreboardData {
   id: string;
@@ -38,17 +39,30 @@ const Scoreboard = () => {
             if (prevScoreboard) {
               if (newData.team1_score !== prevScoreboard.team1_score) {
                 setTeam1ScoreChanged(true);
+                playScoreSound();
                 setTimeout(() => setTeam1ScoreChanged(false), 1000);
               }
               if (newData.team2_score !== prevScoreboard.team2_score) {
                 setTeam2ScoreChanged(true);
+                playScoreSound();
                 setTimeout(() => setTeam2ScoreChanged(false), 1000);
               }
               
               // Show confetti if either score increased
               if (newData.team1_score > prevScoreboard.team1_score || newData.team2_score > prevScoreboard.team2_score) {
                 setShowConfetti(true);
+                playCelebrationSound();
                 setTimeout(() => setShowConfetti(false), 3000);
+              }
+              
+              // Play winner sound if someone just took the lead
+              const wasTeam1Winning = prevScoreboard.team1_score > prevScoreboard.team2_score;
+              const wasTeam2Winning = prevScoreboard.team2_score > prevScoreboard.team1_score;
+              const isTeam1WinningNow = newData.team1_score > newData.team2_score;
+              const isTeam2WinningNow = newData.team2_score > newData.team1_score;
+              
+              if ((!wasTeam1Winning && isTeam1WinningNow) || (!wasTeam2Winning && isTeam2WinningNow)) {
+                setTimeout(() => playWinnerSound(), 200);
               }
             }
             
