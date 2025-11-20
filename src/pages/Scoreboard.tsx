@@ -14,7 +14,6 @@ interface ScoreboardData {
 
 const Scoreboard = () => {
   const [scoreboard, setScoreboard] = useState<ScoreboardData | null>(null);
-  const [prevScores, setPrevScores] = useState<{ team1: number; team2: number }>({ team1: 0, team2: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [team1ScoreChanged, setTeam1ScoreChanged] = useState(false);
   const [team2ScoreChanged, setTeam2ScoreChanged] = useState(false);
@@ -34,29 +33,27 @@ const Scoreboard = () => {
         (payload) => {
           const newData = payload.new as ScoreboardData;
           
-          if (scoreboard) {
+          setScoreboard((prevScoreboard) => {
             // Check for score changes
-            if (newData.team1_score !== scoreboard.team1_score) {
-              setTeam1ScoreChanged(true);
-              setTimeout(() => setTeam1ScoreChanged(false), 1000);
-            }
-            if (newData.team2_score !== scoreboard.team2_score) {
-              setTeam2ScoreChanged(true);
-              setTimeout(() => setTeam2ScoreChanged(false), 1000);
+            if (prevScoreboard) {
+              if (newData.team1_score !== prevScoreboard.team1_score) {
+                setTeam1ScoreChanged(true);
+                setTimeout(() => setTeam1ScoreChanged(false), 1000);
+              }
+              if (newData.team2_score !== prevScoreboard.team2_score) {
+                setTeam2ScoreChanged(true);
+                setTimeout(() => setTeam2ScoreChanged(false), 1000);
+              }
+              
+              // Show confetti if either score increased
+              if (newData.team1_score > prevScoreboard.team1_score || newData.team2_score > prevScoreboard.team2_score) {
+                setShowConfetti(true);
+                setTimeout(() => setShowConfetti(false), 3000);
+              }
             }
             
-            // Show confetti if either score increased
-            if (newData.team1_score > scoreboard.team1_score || newData.team2_score > scoreboard.team2_score) {
-              setShowConfetti(true);
-              setTimeout(() => setShowConfetti(false), 3000);
-            }
-          }
-          
-          setPrevScores({
-            team1: scoreboard?.team1_score || 0,
-            team2: scoreboard?.team2_score || 0
+            return newData;
           });
-          setScoreboard(newData);
         }
       )
       .subscribe();
@@ -64,7 +61,7 @@ const Scoreboard = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [scoreboard]);
+  }, []); // Empty dependency array - only run once on mount
 
   const loadScoreboard = async () => {
     const { data } = await supabase
@@ -76,7 +73,6 @@ const Scoreboard = () => {
     
     if (data) {
       setScoreboard(data);
-      setPrevScores({ team1: data.team1_score, team2: data.team2_score });
     }
   };
 
