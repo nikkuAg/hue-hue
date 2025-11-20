@@ -112,6 +112,33 @@ export type Database = {
         }
         Relationships: []
       }
+      scoreboard: {
+        Row: {
+          id: string
+          team1_name: string
+          team1_score: number
+          team2_name: string
+          team2_score: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          team1_name?: string
+          team1_score?: number
+          team2_name?: string
+          team2_score?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          team1_name?: string
+          team1_score?: number
+          team2_name?: string
+          team2_score?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
