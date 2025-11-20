@@ -4,7 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Trash2, LogOut, Shield, Play, Square, Copy, Users, Crown, Gift } from "lucide-react";
+import { Trash2, LogOut, Shield, Play, Square, Copy, Users, Crown, Gift, Trophy, Plus, Minus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useGameSession } from "@/hooks/useGameSession";
 import {
   AlertDialog,
@@ -24,6 +26,14 @@ interface Blessing {
   created_at: string;
 }
 
+interface ScoreboardData {
+  id: string;
+  team1_name: string;
+  team1_score: number;
+  team2_name: string;
+  team2_score: number;
+}
+
 export default function Admin() {
   const navigate = useNavigate();
   const [blessings, setBlessings] = useState<Blessing[]>([]);
@@ -32,6 +42,11 @@ export default function Admin() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [hostCode, setHostCode] = useState<string | null>(null);
+  const [scoreboard, setScoreboard] = useState<ScoreboardData | null>(null);
+  const [team1Name, setTeam1Name] = useState("");
+  const [team1Score, setTeam1Score] = useState(0);
+  const [team2Name, setTeam2Name] = useState("");
+  const [team2Score, setTeam2Score] = useState(0);
   
   const { session, players } = useGameSession(currentSessionId);
 
@@ -63,6 +78,7 @@ export default function Admin() {
       setCheckingAuth(false);
       loadBlessings();
       loadActiveGameSession();
+      loadScoreboard();
     };
 
     checkAdminAccess();
@@ -247,6 +263,45 @@ export default function Admin() {
     }
   };
 
+  const loadScoreboard = async () => {
+    const { data } = await supabase
+      .from('scoreboard')
+      .select('*')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (data) {
+      setScoreboard(data);
+      setTeam1Name(data.team1_name);
+      setTeam1Score(data.team1_score);
+      setTeam2Name(data.team2_name);
+      setTeam2Score(data.team2_score);
+    }
+  };
+
+  const handleUpdateScoreboard = async () => {
+    if (!scoreboard) return;
+
+    const { error } = await supabase
+      .from('scoreboard')
+      .update({
+        team1_name: team1Name,
+        team1_score: team1Score,
+        team2_name: team2Name,
+        team2_score: team2Score,
+      })
+      .eq('id', scoreboard.id);
+
+    if (error) {
+      toast.error("Failed to update scoreboard");
+      console.error(error);
+    } else {
+      toast.success("Scoreboard updated!");
+      loadScoreboard();
+    }
+  };
+
   const copyGameLink = () => {
     if (!hostCode) return;
     const link = `${window.location.origin}/?code=${hostCode}`;
@@ -395,6 +450,119 @@ export default function Admin() {
                 )}
               </div>
             </div>
+          )}
+        </Card>
+
+        {/* Scoreboard Management */}
+        <Card className="p-6 shadow-card border-teal/20">
+          <div className="flex items-center gap-3 mb-6">
+            <Trophy className="w-6 h-6 text-coral" />
+            <h2 className="text-2xl font-playfair font-semibold text-navy">
+              Scoreboard Management
+            </h2>
+          </div>
+
+          {scoreboard ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Team 1 */}
+                <div className="p-6 bg-white-smoke rounded-lg space-y-4">
+                  <h3 className="text-lg font-semibold text-navy mb-4">Team 1</h3>
+                  <div>
+                    <Label htmlFor="team1-name">Team Name</Label>
+                    <Input
+                      id="team1-name"
+                      value={team1Name}
+                      onChange={(e) => setTeam1Name(e.target.value)}
+                      className="mt-1"
+                      placeholder="Enter team 1 name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="team1-score">Score</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Button
+                        onClick={() => setTeam1Score(Math.max(0, team1Score - 1))}
+                        variant="outline"
+                        size="icon"
+                        className="border-coral text-coral hover:bg-coral hover:text-white"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                      <Input
+                        id="team1-score"
+                        type="number"
+                        value={team1Score}
+                        onChange={(e) => setTeam1Score(parseInt(e.target.value) || 0)}
+                        className="text-center text-2xl font-bold"
+                        min="0"
+                      />
+                      <Button
+                        onClick={() => setTeam1Score(team1Score + 1)}
+                        variant="outline"
+                        size="icon"
+                        className="border-teal text-teal hover:bg-teal hover:text-white"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Team 2 */}
+                <div className="p-6 bg-white-smoke rounded-lg space-y-4">
+                  <h3 className="text-lg font-semibold text-navy mb-4">Team 2</h3>
+                  <div>
+                    <Label htmlFor="team2-name">Team Name</Label>
+                    <Input
+                      id="team2-name"
+                      value={team2Name}
+                      onChange={(e) => setTeam2Name(e.target.value)}
+                      className="mt-1"
+                      placeholder="Enter team 2 name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="team2-score">Score</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Button
+                        onClick={() => setTeam2Score(Math.max(0, team2Score - 1))}
+                        variant="outline"
+                        size="icon"
+                        className="border-coral text-coral hover:bg-coral hover:text-white"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                      <Input
+                        id="team2-score"
+                        type="number"
+                        value={team2Score}
+                        onChange={(e) => setTeam2Score(parseInt(e.target.value) || 0)}
+                        className="text-center text-2xl font-bold"
+                        min="0"
+                      />
+                      <Button
+                        onClick={() => setTeam2Score(team2Score + 1)}
+                        variant="outline"
+                        size="icon"
+                        className="border-teal text-teal hover:bg-teal hover:text-white"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleUpdateScoreboard}
+                className="w-full bg-gradient-to-r from-coral to-peach text-navy hover:opacity-90"
+              >
+                Update Scoreboard
+              </Button>
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-4">Loading scoreboard...</p>
           )}
         </Card>
 
