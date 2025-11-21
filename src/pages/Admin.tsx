@@ -184,6 +184,8 @@ export default function Admin() {
     const winner1 = shuffled[0];
     const winner2 = shuffled[1];
     const winner3 = shuffled[2];
+    const winner4 = shuffled[3];
+    const winner5 = shuffled[4];
 
     // Update winners - all winners are equal now
     try {
@@ -222,6 +224,32 @@ export default function Admin() {
         if (error3) {
           console.error("Failed to set third winner:", error3);
           toast.error("Failed to assign third winner");
+          return;
+        }
+      }
+      
+      if (winner4) {
+        const { error: error4 } = await supabase
+          .from("players")
+          .update({ is_winner: true })
+          .eq("id", winner4.id);
+        
+        if (error4) {
+          console.error("Failed to set fourth winner:", error4);
+          toast.error("Failed to assign fourth winner");
+          return;
+        }
+      }
+      
+      if (winner5) {
+        const { error: error5 } = await supabase
+          .from("players")
+          .update({ is_winner: true })
+          .eq("id", winner5.id);
+        
+        if (error5) {
+          console.error("Failed to set fifth winner:", error5);
+          toast.error("Failed to assign fifth winner");
           return;
         }
       }
