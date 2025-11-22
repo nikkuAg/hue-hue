@@ -48,6 +48,7 @@ const WordItem = ({ word, position, size, color }: {
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#ffffff"
+        font="https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGOUUFzXI5FBtUq5a8bj6wRbzxTFMX40kFQRx0.woff"
       >
         {word}
       </Text>
@@ -163,6 +164,7 @@ export const WordCloud3D = ({ words }: WordCloud3DProps) => {
           color="#E97777"
           anchorX="center"
           anchorY="middle"
+          font="https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGOUUFzXI5FBtUq5a8bj6wRbzxTFMX40kFQRx0.woff"
         >
           No blessings yet
         </Text>
