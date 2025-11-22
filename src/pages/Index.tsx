@@ -342,7 +342,7 @@ const Index = () => {
                   <Button
                     onClick={handleJoinGame}
                     disabled={isJoining}
-                    className="w-full h-12 text-lg font-sans bg-peach text-navy hover:opacity-90 transition-opacity shadow-coral disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-12 text-lg font-sans bg-coral text-navy hover:opacity-90 transition-opacity shadow-coral disabled:opacity-50 disabled:cursor-not-allowed"
                     size="lg"
                   >
                     {isJoining ? "Joining..." : "Join Game"}
